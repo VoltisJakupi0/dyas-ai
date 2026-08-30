@@ -24,7 +24,6 @@ export default function ContactPage() {
                 Contact: <a className="underline underline-offset-4" href={`mailto:${site.email}`}>{site.email}</a>
               </li>
               <li>Address: {site.address}</li>
-              <li>Support Hours: {site.hours}</li>
             </ul>
           </div>
           <div>

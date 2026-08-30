@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { FaqList } from "@/components/FaqList";
 import { PageHero } from "@/components/PageHero";
 import { Kicker, MarkBadge, PlusBox } from "@/components/ui/Icons";
-import { pages, site } from "@/lib/site";
+import { hrefProps, pages, site } from "@/lib/site";
 import { cn } from "@/lib/cn";
 
 const PLAN_MARK = ["layers", "check", "spark"] as const;
@@ -60,7 +60,7 @@ export default function PricingPage() {
                   </ul>
                   <div className="mt-10">
                     <a
-                      href={site.ctaHref}
+                      {...hrefProps(site.ctaHref)}
                       className={cn(
                         "pgp-btn",
                         tone === "night"

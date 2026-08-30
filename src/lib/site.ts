@@ -1,3 +1,10 @@
+export function hrefProps(href: string) {
+  if (/^https?:\/\//i.test(href)) {
+    return { href, target: "_blank" as const, rel: "noopener noreferrer" };
+  }
+  return { href };
+}
+
 export const site = {
   name: "Dyas AI",
   url: "https://www.dyas.ai",
@@ -6,8 +13,7 @@ export const site = {
     "Discover innovative digital solutions with our AI agency, designed to improve efficiency and drive real results for your team.",
   email: "info@dyas.ai",
   address: "London, United Kingdom",
-  hours: "Mon-Fri 9:00 - 21:00",
-  ctaHref: "/contact-us",
+  ctaHref: "https://calendly.com/dyas-info/30min",
   ctaLabel: "Schedule a Call",
   social: {
     instagram: "https://www.instagram.com/dyas.ai/",
@@ -98,12 +104,12 @@ export const hero = {
 export const logos = {
   label: "Trusted by teams shipping production AI",
   items: [
-    { src: "/logos/logo1.svg", alt: "Partner 1", scale: 1.25 },
-    { src: "/logos/logo2.svg", alt: "Partner 2", scale: 1 },
-    { src: "/logos/logo3.svg", alt: "Partner 3", scale: 1 },
-    { src: "/logos/logo4.svg", alt: "Partner 4", scale: 1.8 },
+    { src: "/logos/albinfo-2.png", alt: "albinfo.ch", scale: 2.4, native: true },
+    { src: "/logos/think-b.png", alt: "Think B Agency", scale: 1.35 },
+    { src: "/logos/eptura.png", alt: "Eptura", scale: 3, native: true },
+    { src: "/logos/novartis-2.png", alt: "Novartis", scale: 1.45 },
     { src: "/logos/logo5.svg", alt: "Partner 5", scale: 1 },
-    { src: "/logos/logo6.svg", alt: "Partner 6", scale: 1.25 },
+    { src: "/logos/bankstreet.png", alt: "bankstreet", scale: 1.7 },
   ],
 };
 
@@ -111,40 +117,76 @@ export const work = {
   heading: "Recent work",
   cases: [
     {
-      name: "Think B Agency",
-      body: "Think B is an AI receptionist for a busy agency that wanted inbound work captured, qualified, and routed without the usual ops drag. We designed the product, the agent, and the brand system around how the team actually works.",
-      industry: "Services",
-      tags: ["AI agents", "Product design"],
+      name: "AI Voice Receptionist Agent",
+      body: "A human-like voice assistant that answers phone calls, qualifies callers, books appointments, and routes calls intelligently. Works with phone systems, calendars, and CRMs. Call the number below for a quick demo to see how our voice AI agent works: +1 218 579 3842",
+      industry: "Voice AI",
+      tags: ["CRM Integration", "Scheduling"],
       stats: [
-        { label: "Start to launch", value: "6", unit: "wk" },
+        { label: "Coverage", value: "24", unit: "/7" },
         { label: "Missed-call rate", value: "0" },
-        { label: "Core integrations", value: "4" },
+        { label: "Core integrations", value: "3" },
       ],
-      images: ["/images/work/think-b-site.png", "/images/work/think-b-work.png", "/images/work/think-b-desk.png"],
+      images: ["/images/work/ai2-voice-robot.jpg", "/images/work/ai-voice-02.jpg", "/images/work/ai2-voice-obj.jpg"],
     },
     {
-      name: "Maverick Concierge",
-      body: "A luxury website and app, with AI integrated into the concierge workflow — digital presence rebuilt from the ground up for a high-touch clientele.",
-      industry: "Hospitality",
-      tags: ["Website & app", "AI automation"],
-      stats: [] as { label: string; value: string; unit?: string }[],
-      images: ["/images/work/maverick-site.png", "/images/work/maverick-process.png", "/images/work/maverick-lobby.png"],
+      name: "AI Sales & Lead Qualification Agent",
+      body: "Automates lead capture, qualification, and follow-ups across web, WhatsApp, and CRM platforms. Streamlines your sales pipeline with intelligent lead scoring.",
+      industry: "Sales Automation",
+      tags: ["Multi-Channel", "Lead Scoring"],
+      stats: [
+        { label: "Capture channels", value: "3" },
+        { label: "Follow-up lag", value: "0" },
+        { label: "Pipeline coverage", value: "24", unit: "/7" },
+      ],
+      images: ["/images/work/ai2-sales-robot.jpg", "/images/work/ai-sales-03.jpg", "/images/work/ai2-sales-obj.jpg"],
     },
     {
-      name: "Helix Group",
-      body: "An AI automation system that cut manual workflows by 60% — a second team working silently in the background.",
-      industry: "Operations",
-      tags: ["AI automation"],
-      stats: [{ label: "Less manual workflows", value: "60", unit: "%" }],
-      images: ["/images/work/helix-site.png", "/images/work/helix-group.png", "/images/work/helix-ui.png"],
+      name: "E-Commerce Support Agent",
+      body: "Handles product inquiries, order tracking, returns, and customer support 24/7. Provides instant, accurate responses to customer questions and reduces support workload.",
+      industry: "24/7 Support",
+      tags: ["Order Tracking", "Customer Service"],
+      stats: [
+        { label: "Support hours", value: "24", unit: "/7" },
+        { label: "First response", value: "<1", unit: "min" },
+        { label: "Tickets deflected", value: "60", unit: "%" },
+      ],
+      images: ["/images/work/ai2-commerce-robot.jpg", "/images/work/ai-commerce-03.jpg", "/images/work/ai2-commerce-obj.jpg"],
     },
     {
-      name: "Gala Design CH",
-      body: "Platform and automation systems, translating complex needs into scalable solutions.",
-      industry: "Design",
-      tags: ["Platform", "Automation"],
-      stats: [] as { label: string; value: string; unit?: string }[],
-      images: ["/images/work/gala-site.png", "/images/work/gala-ui.png", "/images/work/gala-space.png"],
+      name: "Appointment & Booking Agent",
+      body: "Automates scheduling, reminders, and confirmations for clinics, services, and consultations. Reduces no-shows and manages your calendar efficiently.",
+      industry: "Scheduling",
+      tags: ["Reminders", "Calendar Sync"],
+      stats: [
+        { label: "Fewer no-shows", value: "40", unit: "%" },
+        { label: "Reminders", value: "Auto" },
+        { label: "Calendar sync", value: "Live" },
+      ],
+      images: ["/images/work/ai2-booking-robot.jpg", "/images/work/ai-booking-02.jpg", "/images/work/ai2-booking-obj.jpg"],
+    },
+    {
+      name: "Event & RSVP Management Agent",
+      body: "Manages guest lists, confirmations, updates, and real-time event communication. Keeps attendees informed and organized throughout the event lifecycle.",
+      industry: "Event Management",
+      tags: ["RSVP Tracking", "Communication"],
+      stats: [
+        { label: "Guest list", value: "Live" },
+        { label: "Confirmations", value: "Auto" },
+        { label: "Attendee updates", value: "Real-time" },
+      ],
+      images: ["/images/work/ai2-event-robot.jpg", "/images/work/ai-event-03.jpg", "/images/work/ai2-event-obj.jpg"],
+    },
+    {
+      name: "Recruitment & HR Screening Agent",
+      body: "Pre-screens candidates, collects CVs, and prepares candidates for interviews. Automates initial HR processes and improves candidate experience.",
+      industry: "HR Automation",
+      tags: ["Screening", "Candidate Management"],
+      stats: [
+        { label: "Pre-screen", value: "Auto" },
+        { label: "CV intake", value: "24", unit: "/7" },
+        { label: "First-round load", value: "0" },
+      ],
+      images: ["/images/work/ai2-hr-robot.jpg", "/images/work/ai-hr-03.jpg", "/images/work/ai2-hr-obj.jpg"],
     },
   ],
 };
@@ -261,7 +303,7 @@ export const platform = {
 export const banner = {
   headline: "Get custom solutions for your business that help you leverage AI and Automation for the processes.",
   cta: "Schedule a Call",
-  ctaHref: "/contact-us",
+  ctaHref: "https://calendly.com/dyas-info/30min",
 };
 
 export const testimonials = {

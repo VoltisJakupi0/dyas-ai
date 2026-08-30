@@ -15,13 +15,14 @@ export function Logos() {
             height={20}
             decoding="async"
             loading="lazy"
+            className={"native" in item && item.native ? "is-native" : undefined}
             style={{ "--logo-s": item.scale } as CSSProperties}
           />
         ))}
         {logos.items.map((item) => (
           <img
             key={`${item.src}-dup`}
-            className="is-dup"
+            className={"native" in item && item.native ? "is-dup is-native" : "is-dup"}
             src={item.src}
             alt=""
             width={120}
@@ -36,7 +37,7 @@ export function Logos() {
         {logos.items.map((item) => (
           <img
             key={`${item.src}-dup2`}
-            className="is-dup"
+            className={"native" in item && item.native ? "is-dup is-native" : "is-dup"}
             src={item.src}
             alt=""
             width={120}
@@ -51,7 +52,7 @@ export function Logos() {
         {logos.items.map((item) => (
           <img
             key={`${item.src}-dup3`}
-            className="is-dup"
+            className={"native" in item && item.native ? "is-dup is-native" : "is-dup"}
             src={item.src}
             alt=""
             width={120}

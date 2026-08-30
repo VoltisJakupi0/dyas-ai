@@ -6,7 +6,7 @@
   --container-padding-mobile: 2.5rem;
   --container-padding-desktop: 6rem;
   --ground: #eeece7;
-  --brand: #0000ff;
+  --brand: #6a3ffb;
   --ink: #ffffff;
   --accent: #000000;
   --accent-22: rgba(0, 0, 0, 0.18);
@@ -34,8 +34,8 @@
   --color-white: #fff;
   --color-day: #eeece7;
   --color-night: #000000;
-  --color-sun: #0000ff;
-  --color-dawn: #0000ff;
+  --color-sun: #6a3ffb;
+  --color-dawn: #6a3ffb;
   --color-dust: #eeece7;
   --color-sand: #e4e2dc;
   --color-dusk: #d8d8d8;
@@ -43,7 +43,7 @@
   --color-stroke-1: #d8d8d8;
   --color-stroke-2: #9a9a9a;
   --color-stroke-3: #424242;
-  --color-desert: #0000ff;
+  --color-desert: #6a3ffb;
   --color-bone: #e8e6e1;
   --color-twilight: #000000;
   --font-heading: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
@@ -556,7 +556,7 @@ body {
   display: flex;
   justify-content: center;
   color: var(--brand);
-  font-size: clamp(34px, calc(-8px + 20vw), 400px);
+  font-size: clamp(34px, calc(-8px + 18vw), 360px);
   line-height: 0;
   white-space: nowrap;
   pointer-events: auto;
@@ -1338,7 +1338,7 @@ body {
 
 .dyas-logos {
   margin-top: 60px;
-  padding-bottom: clamp(24px, 3vw, 48px);
+  padding-bottom: clamp(72px, 10vw, 160px);
   width: min(var(--pgp-container), calc(100% - var(--gutter)));
   margin-inline: auto;
 }
@@ -1368,6 +1368,10 @@ body {
   width: auto;
   flex: 0 0 auto;
   filter: brightness(0);
+}
+
+.dyas-logos__track img.is-native {
+  filter: none;
 }
 
 .dyas-logos__track img.is-dup {
@@ -1725,6 +1729,18 @@ body {
   max-height: 100%;
   aspect-ratio: auto;
   flex: unset;
+  position: relative;
+  overflow: visible;
+  box-shadow: 0 10px 28px rgba(17, 17, 17, 0.12);
+}
+
+.dyas-case .dyas-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(17, 17, 17, 0.06);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.1);
 }
 
 .dyas-tile img {
@@ -2508,7 +2524,7 @@ body {
   .dyas-logos {
     overflow: hidden;
     margin-top: 16px;
-    padding-bottom: 16px;
+    padding-bottom: 48px;
     width: 100%;
     max-width: 100%;
     margin-inline: 0;
@@ -4128,7 +4144,7 @@ body {
   }
 }
 
-/* Closing panel — full-bleed brand blue */
+/* Closing panel — full-bleed brand */
 
 .dyas-closing {
   display: flex;

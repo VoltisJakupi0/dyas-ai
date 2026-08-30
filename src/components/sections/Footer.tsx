@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, type CSSProperties } from "react";
 import { Logo } from "@/components/ui/Logo";
-import { cta, footer, site } from "@/lib/site";
+import { cta, footer, hrefProps, site } from "@/lib/site";
 import { observeInView } from "@/lib/scroll";
 
 const SOCIALS = [
@@ -69,7 +69,7 @@ export function Footer() {
           <CtaHeadline text={cta.headline} accent="Automate" className="dyas-closing__heading" />
           <p className="dyas-closing__sub">{cta.sub}</p>
           <div className="dyas-closing__actions">
-            <a href={site.ctaHref} className="pgp-btn pgp-btn--on-brand">
+            <a {...hrefProps(site.ctaHref)} className="pgp-btn pgp-btn--on-brand">
               <span className="pgp-btn__label">
                 <span>{cta.button}</span>
                 <span aria-hidden="true">{cta.button}</span>
