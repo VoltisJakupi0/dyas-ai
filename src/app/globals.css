@@ -1374,7 +1374,7 @@ body::before {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: clamp(20px, 3vw, 44px);
+  gap: clamp(32px, 4.5vw, 64px);
   --logo-h: clamp(13px, 1.05vw, 17px);
 }
 

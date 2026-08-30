@@ -108,7 +108,6 @@ export const logos = {
     { src: "/logos/think-b.png", alt: "Think B Agency", scale: 1.35 },
     { src: "/logos/eptura.png", alt: "Eptura", scale: 3, native: true },
     { src: "/logos/novartis-2.png", alt: "Novartis", scale: 1.45 },
-    { src: "/logos/logo5.svg", alt: "Partner 5", scale: 1 },
     { src: "/logos/bankstreet.png", alt: "bankstreet", scale: 1.7 },
   ],
 };
