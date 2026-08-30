@@ -1,0 +1,4 @@
+[build.environment]
+  # Resend key is server-only; Next inlines it into the function/cache during build.
+  SECRETS_SCAN_OMIT_KEYS = "RESEND_API_KEY"
+  SECRETS_SCAN_OMIT_PATHS = ".next/cache,.netlify/.next/cache"
