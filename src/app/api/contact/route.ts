@@ -68,24 +68,32 @@ function mailtoUrl(fields: { name: string; email: string; company: string; messa
 }
 
 async function sendWithResend(fields: { name: string; email: string; company: string; message: string }) {
-  const apiKey = process.env.RESEND_API_KEY;
+  const apiKey = process.env["RESEND_API_KEY"];
   if (!apiKey) return false;
 
   const resend = new Resend(apiKey);
-  const from = process.env.EMAIL_FROM || "Dyas AI <beth.t@example.com>";
   const content = text(fields);
-  const { error } = await resend.emails.send({
-    from,
-    to: [site.email],
-    replyTo: fields.email,
-    subject: `New inquiry from ${fields.name}`,
-    text: content,
-    html: `<p><strong>Name:</strong> ${esc(fields.name)}</p>
+  const html = `<p><strong>Name:</strong> ${esc(fields.name)}</p>
 <p><strong>Email:</strong> ${esc(fields.email)}</p>
 <p><strong>Company:</strong> ${esc(fields.company || "—")}</p>
-<p>${esc(fields.message).replace(/\n/g, "<br>")}</p>`,
-  });
-  return !error;
+<p>${esc(fields.message).replace(/\n/g, "<br>")}</p>`;
+
+  const preferred = process.env["EMAIL_FROM"] || "Dyas AI <beth.t@example.com>";
+  const froms = [...new Set([preferred, "Dyas AI <beth.t@example.com>"])];
+
+  for (const from of froms) {
+    const { error } = await resend.emails.send({
+      from,
+      to: [site.email],
+      replyTo: fields.email,
+      subject: `New inquiry from ${fields.name}`,
+      text: content,
+      html,
+    });
+    if (!error) return true;
+    console.error("[contact] resend", from, error);
+  }
+  return false;
 }
 
 async function sendWithWeb3Forms(fields: { name: string; email: string; company: string; message: string }) {

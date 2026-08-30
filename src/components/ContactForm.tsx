@@ -113,7 +113,7 @@ export function ContactForm({ cta }: { cta: string }) {
       </div>
       {status === "sent" ? (
         <p className="text-body-16-light" role="status">
-          Request sent to {site.email}. We’ll get back to you shortly.
+          Request sent. We’ll get back to you shortly.
         </p>
       ) : null}
       {status === "mail" ? (
