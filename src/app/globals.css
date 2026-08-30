@@ -77,6 +77,21 @@ body {
   background: var(--ground);
   color: var(--accent);
   overflow: visible;
+  overscroll-behavior-y: none;
+}
+
+/* Keep the notch / iOS status bar on ground color when the purple footer
+   scrolls under the top (viewport-fit: cover). */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 50;
+  height: env(safe-area-inset-top, 0px);
+  pointer-events: none;
+  background: var(--ground);
 }
 
 ::selection {
