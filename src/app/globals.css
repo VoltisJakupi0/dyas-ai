@@ -919,7 +919,7 @@ body::before {
 .dyas-hero__sub {
   max-width: 480px;
   margin-left: auto;
-  margin-right: max(calc((100% - var(--pgp-container)) / 2 - 100px), calc(var(--gutter) / 2));
+  margin-right: max(calc((100% - var(--pgp-container)) / 2), calc(var(--gutter) / 2));
   text-align: left;
   font-family: var(--font-body);
   font-weight: 400;
@@ -1451,7 +1451,7 @@ body::before {
 
 @media (max-width: 1024px) {
   .dyas-work {
-    padding-block: 0 8px;
+    padding-block: 0;
   }
   .dyas-work__track,
   .dyas-work__pin {
@@ -1523,8 +1523,8 @@ body::before {
   }
   .dyas-case .dyas-gallery {
     flex: 0 0 auto !important;
-    width: 100% !important;
-    margin-inline: 0 !important;
+    width: calc(100% + 40px) !important;
+    margin-inline: -20px !important;
     min-height: 0 !important;
     height: auto !important;
     opacity: 1 !important;
@@ -2643,11 +2643,11 @@ body::before {
 }
 
 @media (max-width: 1024px) {
-  /* Work gallery: middle shot only, full width. */
+  /* Work gallery: middle shot only, edge to edge. */
   .dyas-case .dyas-gallery {
     overflow: hidden !important;
-    width: 100% !important;
-    margin-inline: 0 !important;
+    width: calc(100% + 40px) !important;
+    margin-inline: -20px !important;
     padding-inline: 0 !important;
     height: auto !important;
     flex: 0 0 auto !important;
@@ -5102,7 +5102,6 @@ body::before {
     top: 0;
     height: 100svh;
     height: 100dvh;
-    height: 100lvh;
     overflow: clip;
     align-items: stretch;
     justify-content: stretch;
