@@ -1483,7 +1483,7 @@ body::before {
     filter: none !important;
     pointer-events: auto !important;
     transform: none !important;
-    padding: 0 20px 20px !important;
+    padding: 16px 20px 20px !important;
     background: var(--ground) !important;
     overflow: visible !important;
     display: flex !important;
@@ -1552,6 +1552,11 @@ body::before {
     max-height: 46vh !important;
     aspect-ratio: 4 / 3 !important;
     overflow: hidden !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .dyas-case .dyas-tile::after {
+    display: none !important;
   }
   .dyas-case .dyas-tile img {
     object-position: center 68%;
@@ -2657,6 +2662,11 @@ body::before {
     max-height: 46vh !important;
     aspect-ratio: 4 / 3 !important;
     overflow: hidden !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .dyas-case .dyas-tile::after {
+    display: none !important;
   }
   .dyas-case .dyas-tile img {
     object-position: center 68%;
