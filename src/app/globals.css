@@ -1587,6 +1587,11 @@ body::before {
 }
 
 @media (min-width: 1025px) {
+  .dyas-case {
+    padding-top: calc(var(--header-height) + 16px);
+    padding-bottom: 32px;
+  }
+
   .dyas-case__head {
     margin-bottom: 28px;
   }
@@ -3649,7 +3654,7 @@ body::before {
 }
 
 .dyas-pawn--sit {
-  transform: translate(-50%, -58%);
+  transform: translate(-50%, -62%);
 }
 .dyas-pawn--sit img {
   animation: dyas-pawn-type 0.42s ease-in-out infinite;
