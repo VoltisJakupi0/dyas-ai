@@ -1483,8 +1483,8 @@ body::before {
     filter: none !important;
     pointer-events: auto !important;
     transform: none !important;
-    padding: 16px 20px 20px !important;
-    background: var(--ground) !important;
+    padding: 16px 20px 0 !important;
+    background: transparent !important;
     overflow: visible !important;
     display: flex !important;
     flex-direction: column !important;
@@ -1494,7 +1494,7 @@ body::before {
   }
   .dyas-case:last-child {
     min-height: 0 !important;
-    padding-bottom: 20px !important;
+    padding-bottom: 0 !important;
   }
   .dyas-case__inner {
     display: flex !important;
@@ -1511,6 +1511,7 @@ body::before {
     width: 100%;
     margin-inline: 0;
     margin-bottom: 16px;
+    background: var(--ground);
   }
   .dyas-case__intro {
     max-width: none;
@@ -1559,7 +1560,8 @@ body::before {
     display: none !important;
   }
   .dyas-case .dyas-tile img {
-    object-position: center 68%;
+    object-fit: cover;
+    object-position: center 42%;
   }
   .dyas-case .dyas-gallery__row {
     scale: none;
@@ -2674,7 +2676,8 @@ body::before {
     display: none !important;
   }
   .dyas-case .dyas-tile img {
-    object-position: center 68%;
+    object-fit: cover;
+    object-position: center 42%;
   }
 }
 
