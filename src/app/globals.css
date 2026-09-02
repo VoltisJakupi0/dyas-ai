@@ -5102,6 +5102,7 @@ body::before {
     top: 0;
     height: 100svh;
     height: 100dvh;
+    height: 100lvh;
     overflow: clip;
     align-items: stretch;
     justify-content: stretch;
