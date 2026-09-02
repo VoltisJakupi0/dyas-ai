@@ -81,34 +81,18 @@ body {
   overscroll-behavior-y: none;
 }
 
-/* Keep iPhone Safari's translucent chrome on ground color. Without this,
-   the top URL bar and bottom toolbar sample whatever section is behind
-   them (blue hero, photos, purple footer). */
-body::before,
-body::after {
+/* Keep the notch / iOS status bar on ground color when content
+   scrolls under the top (viewport-fit: cover). */
+body::before {
   content: "";
   position: fixed;
+  top: 0;
   right: 0;
   left: 0;
   z-index: 50;
+  height: env(safe-area-inset-top, 0px);
   pointer-events: none;
   background: var(--ground);
-}
-body::before {
-  top: 0;
-  height: env(safe-area-inset-top, 0px);
-}
-body::after {
-  bottom: 0;
-  height: env(safe-area-inset-bottom, 0px);
-}
-
-@supports (height: 100lvh) and (height: 100dvh) {
-  @media (pointer: coarse) {
-    body::after {
-      height: max(env(safe-area-inset-bottom, 0px), min(96px, calc(100lvh - 100dvh)));
-    }
-  }
 }
 
 ::selection {
@@ -588,7 +572,7 @@ body::after {
   display: flex;
   justify-content: center;
   color: var(--brand);
-  font-size: clamp(34px, calc(-8px + 18vw), 360px);
+  font-size: clamp(34px, calc(-8px + 15vw), 280px);
   line-height: 0;
   white-space: nowrap;
   pointer-events: auto;
