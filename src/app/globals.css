@@ -21,6 +21,7 @@
   --placeholder: #d9d9d9;
   --section-y: clamp(64px, 7vw, 104px);
   --section-y-tight: clamp(28px, 3.5vw, 44px);
+  color-scheme: light;
 }
 
 @media (min-width: 2000px) {
@@ -80,18 +81,34 @@ body {
   overscroll-behavior-y: none;
 }
 
-/* Keep the notch / iOS status bar on ground color when the purple footer
-   scrolls under the top (viewport-fit: cover). */
-body::before {
+/* Keep iPhone Safari's translucent chrome on ground color. Without this,
+   the top URL bar and bottom toolbar sample whatever section is behind
+   them (blue hero, photos, purple footer). */
+body::before,
+body::after {
   content: "";
   position: fixed;
-  top: 0;
   right: 0;
   left: 0;
   z-index: 50;
-  height: env(safe-area-inset-top, 0px);
   pointer-events: none;
   background: var(--ground);
+}
+body::before {
+  top: 0;
+  height: env(safe-area-inset-top, 0px);
+}
+body::after {
+  bottom: 0;
+  height: env(safe-area-inset-bottom, 0px);
+}
+
+@supports (height: 100lvh) and (height: 100dvh) {
+  @media (pointer: coarse) {
+    body::after {
+      height: max(env(safe-area-inset-bottom, 0px), min(96px, calc(100lvh - 100dvh)));
+    }
+  }
 }
 
 ::selection {
@@ -1276,11 +1293,12 @@ body::before {
     box-sizing: border-box;
     pointer-events: none;
     z-index: 40;
+    background: var(--ground);
   }
   .dyas-header--frost {
     overflow: clip;
     isolation: isolate;
-    background: transparent;
+    background: var(--ground);
     border-bottom: 0;
   }
   .dyas-header--away {
@@ -4198,7 +4216,7 @@ body::before {
   background: var(--brand);
   color: var(--ink);
   padding-top: var(--section-y);
-  padding-bottom: 26px;
+  padding-bottom: max(26px, env(safe-area-inset-bottom, 0px));
 }
 
 .dyas-closing__top,

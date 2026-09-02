@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { SafariChrome } from "@/components/SafariChrome";
 import { site } from "@/lib/site";
 import { graphJsonLd, serializeJsonLd } from "@/lib/seo";
 
@@ -22,10 +23,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#eeece7" },
-    { media: "(prefers-color-scheme: dark)", color: "#eeece7" },
-  ],
+  colorScheme: "light",
+  themeColor: "#eeece7",
 };
 
 export const metadata: Metadata = {
@@ -40,6 +39,9 @@ export const metadata: Metadata = {
   creator: site.name,
   publisher: site.name,
   category: "technology",
+  appleWebApp: {
+    statusBarStyle: "default",
+  },
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
@@ -82,6 +84,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: serializeJsonLd(graphJsonLd) }}
         />
+        <SafariChrome />
         {children}
       </body>
     </html>

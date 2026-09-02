@@ -211,7 +211,7 @@ export function Header() {
           "dyas-header",
           recede && "dyas-header--recede",
           away && "dyas-header--away",
-          frost && "dyas-header--frost bg-white/15 backdrop-blur-[32px] backdrop-saturate-150",
+          frost && "dyas-header--frost",
         )}
       >
         <Link href="/" aria-label="Home" className="contents">
