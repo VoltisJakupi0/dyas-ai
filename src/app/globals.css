@@ -1483,8 +1483,9 @@ body::before {
     filter: none !important;
     pointer-events: auto !important;
     transform: none !important;
-    padding: 16px 20px 0 !important;
-    background: transparent !important;
+    padding: 0 !important;
+    background: var(--ground) !important;
+    border-radius: 0;
     overflow: visible !important;
     display: flex !important;
     flex-direction: column !important;
@@ -1500,18 +1501,22 @@ body::before {
     display: flex !important;
     flex-direction: column !important;
     justify-content: flex-start !important;
+    width: 100% !important;
     height: auto !important;
     min-height: 0 !important;
     overflow: visible !important;
     translate: none !important;
+    will-change: auto;
     background: transparent;
   }
   .dyas-case__head {
     flex-shrink: 0;
     width: 100%;
     margin-inline: 0;
-    margin-bottom: 16px;
+    margin-bottom: 0;
+    padding: max(20px, env(safe-area-inset-top, 0px)) 20px 16px;
     background: var(--ground);
+    box-sizing: border-box;
   }
   .dyas-case__intro {
     max-width: none;
@@ -1523,8 +1528,8 @@ body::before {
   }
   .dyas-case .dyas-gallery {
     flex: 0 0 auto !important;
-    width: calc(100% + 40px) !important;
-    margin-inline: -20px !important;
+    width: 100% !important;
+    margin-inline: 0 !important;
     min-height: 0 !important;
     height: auto !important;
     opacity: 1 !important;
@@ -1577,8 +1582,6 @@ body::before {
 }
 
 .dyas-case__head {
-  width: min(var(--pgp-container), calc(100% - var(--gutter)));
-  margin-inline: auto;
   display: flex;
   flex-shrink: 0;
   justify-content: space-between;
@@ -1595,6 +1598,8 @@ body::before {
   }
 
   .dyas-case__head {
+    width: min(var(--pgp-container), calc(100% - var(--gutter)));
+    margin-inline: auto;
     margin-bottom: 28px;
   }
 }
@@ -2590,7 +2595,7 @@ body::before {
     width: 100%;
   }
   .dyas-case__head {
-    margin-bottom: 20px;
+    margin-bottom: 0;
   }
   .dyas-tile {
     width: clamp(240px, 80vw, 340px);
@@ -2643,11 +2648,17 @@ body::before {
 }
 
 @media (max-width: 1024px) {
+  .dyas-case__head {
+    width: 100%;
+    margin-inline: 0;
+    margin-bottom: 0;
+    padding: max(20px, env(safe-area-inset-top, 0px)) 20px 16px;
+  }
   /* Work gallery: middle shot only, edge to edge. */
   .dyas-case .dyas-gallery {
     overflow: hidden !important;
-    width: calc(100% + 40px) !important;
-    margin-inline: -20px !important;
+    width: 100% !important;
+    margin-inline: 0 !important;
     padding-inline: 0 !important;
     height: auto !important;
     flex: 0 0 auto !important;
