@@ -23,8 +23,8 @@ const BEATS: Beat[] = [
   { text: "We automate the last mile.", size: "clamp(22px, 3.2vw, 36px)" },
 ];
 
-const BEAT_START = 0.18;
-const BEAT_END = 0.72;
+const BEAT_START = 0.28;
+const BEAT_END = 0.82;
 
 function clamp(n: number, a: number, b: number) {
   return Math.max(a, Math.min(b, n));

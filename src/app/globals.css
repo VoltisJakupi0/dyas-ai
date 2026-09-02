@@ -661,7 +661,7 @@ body::before {
 .dyas-hero-stage {
   position: relative;
   flex: 0 0 auto;
-  min-height: 320vh;
+  min-height: 480vh;
   background: transparent;
   color: #fafafa;
   width: 100%;
@@ -1451,12 +1451,14 @@ body::before {
 
 @media (max-width: 1024px) {
   .dyas-work {
-    padding-block: 24px 8px;
+    padding-block: 0 8px;
   }
   .dyas-work__track,
   .dyas-work__pin {
     display: contents !important;
     height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
   }
   .dyas-work .dyas-reveal,
   .dyas-work .dyas-case__title,
@@ -1476,31 +1478,33 @@ body::before {
     top: 0 !important;
     width: 100% !important;
     height: auto !important;
-    min-height: 100svh !important;
-    min-height: 100dvh !important;
+    min-height: 0 !important;
     opacity: 1 !important;
     filter: none !important;
     pointer-events: auto !important;
     transform: none !important;
-    padding: calc(var(--header-height, 3.75rem) + env(safe-area-inset-top, 0px) + 12px) 20px 32px !important;
+    padding: 0 20px 20px !important;
     background: var(--ground) !important;
     overflow: visible !important;
     display: flex !important;
     flex-direction: column !important;
+    justify-content: flex-start !important;
     z-index: calc(var(--i, 0) + 1);
     box-shadow: none;
   }
   .dyas-case:last-child {
     min-height: 0 !important;
-    padding-bottom: 28px !important;
+    padding-bottom: 20px !important;
   }
   .dyas-case__inner {
     display: flex !important;
     flex-direction: column !important;
+    justify-content: flex-start !important;
     height: auto !important;
-    min-height: auto !important;
+    min-height: 0 !important;
     overflow: visible !important;
     translate: none !important;
+    background: transparent;
   }
   .dyas-case__head {
     flex-shrink: 0;
@@ -1518,42 +1522,39 @@ body::before {
   }
   .dyas-case .dyas-gallery {
     flex: 0 0 auto !important;
-    width: calc(100% + 40px) !important;
-    margin-inline: -20px !important;
+    width: 100% !important;
+    margin-inline: 0 !important;
     min-height: 0 !important;
     height: auto !important;
     opacity: 1 !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    cursor: grab;
-    padding-inline: 20px !important;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: 20px;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: contain;
-    scrollbar-width: none;
+    overflow: hidden !important;
+    cursor: default;
+    padding-inline: 0 !important;
   }
   .dyas-case .dyas-gallery::-webkit-scrollbar {
     display: none;
   }
   .dyas-case .dyas-gallery__row {
-    display: flex !important;
+    display: block !important;
     grid-template-columns: none !important;
-    width: max-content !important;
+    width: 100% !important;
     height: auto !important;
     max-height: none !important;
-    gap: 12px !important;
-    align-items: stretch;
-    padding-inline-end: 8px;
+    gap: 0 !important;
   }
   .dyas-case .dyas-tile {
-    flex: 0 0 auto !important;
-    width: min(78vw, 340px) !important;
+    display: none !important;
+  }
+  .dyas-case .dyas-tile:nth-child(2) {
+    display: block !important;
+    width: 100% !important;
     height: auto !important;
-    max-height: none !important;
+    max-height: 46vh !important;
     aspect-ratio: 4 / 3 !important;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
+    overflow: hidden !important;
+  }
+  .dyas-case .dyas-tile img {
+    object-position: center 68%;
   }
   .dyas-case .dyas-gallery__row {
     scale: none;
@@ -2630,30 +2631,35 @@ body::before {
 }
 
 @media (max-width: 1024px) {
-  /* Work gallery: snap carousel. Wins over the 2-col / 3-col grids above. */
+  /* Work gallery: middle shot only, full width. */
   .dyas-case .dyas-gallery {
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    width: calc(100% + 40px) !important;
-    margin-inline: -20px !important;
-    padding-inline: 20px !important;
+    overflow: hidden !important;
+    width: 100% !important;
+    margin-inline: 0 !important;
+    padding-inline: 0 !important;
     height: auto !important;
     flex: 0 0 auto !important;
   }
   .dyas-case .dyas-gallery__row {
-    display: flex !important;
+    display: block !important;
     grid-template-columns: none !important;
-    width: max-content !important;
+    width: 100% !important;
     height: auto !important;
-    gap: 12px !important;
+    gap: 0 !important;
   }
   .dyas-case .dyas-tile {
-    flex: 0 0 auto !important;
-    width: min(78vw, 340px) !important;
+    display: none !important;
+  }
+  .dyas-case .dyas-tile:nth-child(2) {
+    display: block !important;
+    width: 100% !important;
     height: auto !important;
-    max-height: none !important;
+    max-height: 46vh !important;
     aspect-ratio: 4 / 3 !important;
-    scroll-snap-align: start;
+    overflow: hidden !important;
+  }
+  .dyas-case .dyas-tile img {
+    object-position: center 68%;
   }
 }
 
@@ -5072,7 +5078,7 @@ body::before {
   .dyas-hero-stage,
   .dyas-hero-area__showreel {
     width: 100%;
-    min-height: 280vh;
+    min-height: 420vh;
     height: auto;
     margin-top: 0;
   }
@@ -5161,7 +5167,7 @@ body::before {
 
   .dyas-hero-stage,
   .dyas-hero-area__showreel {
-    min-height: 280vh;
+    min-height: 420vh;
     height: auto;
   }
 

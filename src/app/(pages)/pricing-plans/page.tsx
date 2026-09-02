@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { FaqList } from "@/components/FaqList";
 import { PageHero } from "@/components/PageHero";
@@ -12,7 +9,6 @@ const PLAN_MARK = ["layers", "check", "spark"] as const;
 const PLAN_TONE = ["", "brand", "night"] as const;
 
 export default function PricingPage() {
-  const [yearly, setYearly] = useState(false);
   const copy = pages.pricing;
 
   return (
@@ -21,22 +17,7 @@ export default function PricingPage() {
 
       <section className="dyas-sheet__section dyas-sheet__section--flush">
         <div className="container-site">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <Kicker>Pick a shape, not a SKU</Kicker>
-            <div className="dyas-plan-toggle">
-              <span data-on={String(!yearly)}>Monthly</span>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={yearly}
-                aria-label="Yearly billing"
-                onClick={() => setYearly((v) => !v)}
-              >
-                <span />
-              </button>
-              <span data-on={String(yearly)}>Yearly · {copy.save}</span>
-            </div>
-          </div>
+          <Kicker>Pick a shape, not a SKU</Kicker>
 
           <div className="dyas-sheet__grid dyas-sheet__grid--plans mt-10">
             {copy.plans.map((plan, i) => {

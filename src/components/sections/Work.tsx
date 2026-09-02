@@ -131,18 +131,23 @@ export function Work() {
                 </div>
                 <Gallery label={`${item.name} – project gallery`}>
                   <div className="dyas-gallery__row">
-                    {item.images.map((src, i) => (
+                    {item.images.map((src, i) => {
+                      const lcp = index === 0 && i === 1;
+                      return (
                       <figure key={`${src}-${i}`} className="dyas-tile">
                         <Image
                           src={src}
                           alt={`${item.name} ${i + 1}`}
                           width={1536}
                           height={1024}
-                          sizes="(max-width: 1024px) 80vw, 33vw"
+                          sizes="(max-width: 1024px) 100vw, 33vw"
                           quality={70}
+                          priority={lcp}
+                          loading={lcp ? "eager" : "lazy"}
                         />
                       </figure>
-                    ))}
+                      );
+                    })}
                   </div>
                 </Gallery>
               </div>
