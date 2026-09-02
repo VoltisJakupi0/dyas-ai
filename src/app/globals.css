@@ -5097,15 +5097,21 @@ body::before {
     margin-top: 0;
   }
 
+  /* Fill the large viewport so the terrain runs under the browser toolbar
+     instead of stopping above it and leaving a flat band. */
   .dyas-hero-pin {
     position: sticky;
     top: 0;
     height: 100svh;
-    height: 100dvh;
+    height: 100lvh;
     overflow: clip;
     align-items: stretch;
     justify-content: stretch;
     background: var(--ground);
+  }
+
+  .dyas-term {
+    max-height: calc(100dvh - 22vh);
   }
 
   .dyas-hero-frame {
