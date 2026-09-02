@@ -163,30 +163,6 @@ export const work = {
       ],
       images: ["/images/work/ai2-booking-robot.jpg", "/images/work/ai-booking-02.jpg", "/images/work/ai2-booking-obj.jpg"],
     },
-    {
-      name: "Event & RSVP Management Agent",
-      body: "Manages guest lists, confirmations, updates, and real-time event communication. Keeps attendees informed and organized throughout the event lifecycle.",
-      industry: "Event Management",
-      tags: ["RSVP Tracking", "Communication"],
-      stats: [
-        { label: "Guest list", value: "Live" },
-        { label: "Confirmations", value: "Auto" },
-        { label: "Attendee updates", value: "Real-time" },
-      ],
-      images: ["/images/work/ai2-event-robot.jpg", "/images/work/ai-event-03.jpg", "/images/work/ai2-event-obj.jpg"],
-    },
-    {
-      name: "Recruitment & HR Screening Agent",
-      body: "Pre-screens candidates, collects CVs, and prepares candidates for interviews. Automates initial HR processes and improves candidate experience.",
-      industry: "HR Automation",
-      tags: ["Screening", "Candidate Management"],
-      stats: [
-        { label: "Pre-screen", value: "Auto" },
-        { label: "CV intake", value: "24", unit: "/7" },
-        { label: "First-round load", value: "0" },
-      ],
-      images: ["/images/work/ai2-hr-robot.jpg", "/images/work/ai-hr-03.jpg", "/images/work/ai2-hr-obj.jpg"],
-    },
   ],
 };
 

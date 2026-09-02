@@ -50,21 +50,14 @@ const FEED = [
 ];
 
 const CHAIRS = [
-  { x: 26, y: 51, face: "up" as const, join: { x: 38, y: 52 } },
-  { x: 73, y: 51, face: "up" as const, join: { x: 62, y: 52 } },
-  { x: 26, y: 76, face: "up" as const, join: { x: 38, y: 74 } },
-  { x: 73, y: 76, face: "up" as const, join: { x: 62, y: 74 } },
-];
-
-const AISLE = [
-  { x: 44, y: 52 },
-  { x: 44, y: 63 },
-  { x: 44, y: 74 },
+  { x: 24, y: 46.5, face: "up" as const },
+  { x: 70, y: 46.5, face: "up" as const },
+  { x: 22.5, y: 70.5, face: "up" as const },
+  { x: 71, y: 70.5, face: "up" as const },
 ];
 
 type Pose = "sit" | "idle" | "walk";
 type Face = "left" | "right" | "up" | "down";
-type Point = { x: number; y: number; sit?: boolean };
 
 type Pawn = {
   id: number;
@@ -73,8 +66,6 @@ type Pawn = {
   pose: Pose;
   face: Face;
   frame: 0 | 1;
-  path: Point[];
-  wait: number;
 };
 
 function pad(n: number) {
@@ -94,47 +85,6 @@ function clockLabel() {
   return `${hour}:${minute}`;
 }
 
-function hypot(ax: number, ay: number, bx: number, by: number) {
-  const dx = bx - ax;
-  const dy = by - ay;
-  return Math.sqrt(dx * dx + dy * dy);
-}
-
-function aisleIndex(y: number) {
-  let best = 0;
-  for (let i = 1; i < AISLE.length; i++) {
-    if (Math.abs(AISLE[i].y - y) < Math.abs(AISLE[best].y - y)) best = i;
-  }
-  return best;
-}
-
-function aisleWalk(fromY: number, toY: number): Point[] {
-  const start = aisleIndex(fromY);
-  const end = aisleIndex(toY);
-  const points: Point[] = [];
-  const step = start <= end ? 1 : -1;
-  for (let i = start; i !== end; i += step) {
-    points.push(AISLE[i + step]);
-  }
-  return points;
-}
-
-function outPath(id: number): Point[] {
-  const chair = CHAIRS[id];
-  const target = AISLE[id < 2 ? AISLE.length - 1 : 0];
-  return [chair.join, AISLE[aisleIndex(chair.join.y)], ...aisleWalk(chair.join.y, target.y)];
-}
-
-function homePath(id: number, from: Point): Point[] {
-  const chair = CHAIRS[id];
-  return [
-    AISLE[aisleIndex(from.y)],
-    ...aisleWalk(from.y, chair.join.y),
-    chair.join,
-    { x: chair.x, y: chair.y, sit: true },
-  ];
-}
-
 function seedCrew(): Pawn[] {
   return CHAIRS.map((chair, id) => ({
     id,
@@ -143,101 +93,11 @@ function seedCrew(): Pawn[] {
     pose: "sit" as const,
     face: chair.face,
     frame: 0 as const,
-    path: [],
-    wait: 2400 + id * 2600,
   }));
 }
 
-function tickCrew(crew: Pawn[], dt: number, now: number): Pawn[] {
-  const walking = crew.some((p) => p.pose === "walk" || p.path.length > 0);
-  return crew.map((pawn) => {
-    if (pawn.pose === "walk" || pawn.path.length > 0) {
-      const dest = pawn.path[0];
-      if (!dest) {
-        const chair = CHAIRS[pawn.id];
-        return {
-          ...pawn,
-          pose: "sit",
-          face: chair.face,
-          x: chair.x,
-          y: chair.y,
-          path: [],
-          wait: 4000,
-        };
-      }
-      const dist = hypot(pawn.x, pawn.y, dest.x, dest.y);
-      if (dist < 1.05) {
-        const rest = pawn.path.slice(1);
-        const chair = CHAIRS[pawn.id];
-        if (dest.sit) {
-          return {
-            ...pawn,
-            x: chair.x,
-            y: chair.y,
-            pose: "sit",
-            face: chair.face,
-            path: [],
-            wait: 3800 + pawn.id * 500,
-          };
-        }
-        if (rest.length === 0) {
-          return {
-            ...pawn,
-            x: dest.x,
-            y: dest.y,
-            pose: "idle",
-            path: [],
-            wait: 900,
-          };
-        }
-        return { ...pawn, x: dest.x, y: dest.y, path: rest, pose: "walk" };
-      }
-      const speed = 11;
-      const step = Math.min(dist, speed * dt);
-      const nx = pawn.x + ((dest.x - pawn.x) / dist) * step;
-      const ny = pawn.y + ((dest.y - pawn.y) / dist) * step;
-      return {
-        ...pawn,
-        x: nx,
-        y: ny,
-        pose: "walk",
-        face: heading(pawn.x, pawn.y, dest.x, dest.y),
-        frame: Math.floor(now / 140) % 2 === 0 ? 0 : 1,
-      };
-    }
-
-    const rest = pawn.wait - dt * 1000;
-    if (rest > 0) return { ...pawn, wait: rest };
-
-    if (pawn.pose === "idle") {
-      return { ...pawn, pose: "walk", path: homePath(pawn.id, { x: pawn.x, y: pawn.y }), wait: 0 };
-    }
-
-    if (walking) return { ...pawn, wait: 1100 };
-
-    return { ...pawn, pose: "walk", path: outPath(pawn.id), wait: 0 };
-  });
-}
-
-function heading(x: number, y: number, tx: number, ty: number): Face {
-  const dx = tx - x;
-  const dy = ty - y;
-  if (Math.abs(dx) >= Math.abs(dy)) return dx < 0 ? "left" : "right";
-  return dy < 0 ? "up" : "down";
-}
-
-function pawnSrc(pawn: Pawn) {
-  const step = pawn.frame === 0 ? "a" : "b";
-  if (pawn.pose === "sit") return "/images/floor/sit-rear.png";
-  if (pawn.pose === "idle") {
-    if (pawn.face === "up") return "/images/floor/idle-back.png";
-    if (pawn.face === "left") return "/images/floor/idle-left.png";
-    return "/images/floor/idle.png";
-  }
-  if (pawn.face === "up") return `/images/floor/walk-up-${step}.png`;
-  if (pawn.face === "down") return `/images/floor/walk-down-${step}.png`;
-  if (pawn.face === "left") return `/images/floor/walk-${step}-left.png`;
-  return `/images/floor/walk-${step}.png`;
+function pawnSrc() {
+  return "/images/floor/sit-rear.png";
 }
 
 export function Embed() {
@@ -245,7 +105,7 @@ export function Embed() {
   const [task, setTask] = useState(0);
   const [feed, setFeed] = useState(0);
   const [time, setTime] = useState("09:41");
-  const [crew, setCrew] = useState<Pawn[]>(() => seedCrew());
+  const [crew] = useState<Pawn[]>(() => seedCrew());
   const paused = useRef(false);
   const station = STATIONS[active];
   const errand = TASKS[task];
@@ -274,28 +134,11 @@ export function Embed() {
       setFeed((i) => (i + 1) % FEED.length);
     }, 2200);
 
-    let raf = 0;
-    let last = performance.now();
-    let acc = 0;
-    const loop = (now: number) => {
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
-      acc += dt;
-      if (acc >= 1 / 18) {
-        const step = acc;
-        acc = 0;
-        setCrew((prev) => tickCrew(prev, step, now));
-      }
-      raf = window.requestAnimationFrame(loop);
-    };
-    raf = window.requestAnimationFrame(loop);
-
     return () => {
       window.clearInterval(tick);
       window.clearInterval(desks);
       window.clearInterval(jobs);
       window.clearInterval(logs);
-      window.cancelAnimationFrame(raf);
     };
   }, []);
 
@@ -366,7 +209,7 @@ export function Embed() {
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                          src={pawnSrc(pawn)}
+                          src={pawnSrc()}
                           alt=""
                           width={80}
                           height={118}
@@ -386,13 +229,7 @@ export function Embed() {
                           <button type="button" onClick={() => focus(i)}>
                             <i />
                             <b>{item.role}</b>
-                            <span>
-                              {crew[i]?.pose === "walk"
-                                ? "walking"
-                                : crew[i]?.pose === "idle"
-                                  ? "on errand"
-                                  : item.doing}
-                            </span>
+                            <span>{item.doing}</span>
                           </button>
                         </li>
                       ))}
@@ -415,7 +252,7 @@ export function Embed() {
                   <p>
                     <b>Now</b>
                     <span>
-                      {station.role} · {crew[active]?.pose === "walk" ? "walking" : station.doing}
+                      {station.role} · {station.doing}
                     </span>
                   </p>
                   <p>
