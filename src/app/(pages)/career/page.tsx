@@ -19,20 +19,35 @@ export default function CareerPage() {
       <section className="dyas-sheet__section dyas-sheet__section--flush dyas-sheet__section--end">
         <div className="container-site grid gap-12 lg:grid-cols-[1.4fr_0.8fr]">
           <div className="dyas-sheet__grid">
-            {copy.jobs.map((job) => (
-              <article key={job.slug} className="dyas-sheet-card">
+            {copy.jobs.length ? (
+              copy.jobs.map((job) => (
+                <article key={job.slug} className="dyas-sheet-card">
+                  <MarkBadge name="pen" />
+                  <p className="dyas-sheet__kicker">
+                    <span className="dyas-dot" />
+                    Open role
+                  </p>
+                  <h2 className="dyas-sheet-card__title">{job.title}</h2>
+                  <p className="dyas-sheet-card__body">{job.body}</p>
+                  <Link href={`/career/${job.slug}`} className="dyas-sheet-card__link">
+                    Read more
+                  </Link>
+                </article>
+              ))
+            ) : (
+              <article className="dyas-sheet-card">
                 <MarkBadge name="pen" />
                 <p className="dyas-sheet__kicker">
                   <span className="dyas-dot" />
-                  Open role
+                  Open roles
                 </p>
-                <h2 className="dyas-sheet-card__title">{job.title}</h2>
-                <p className="dyas-sheet-card__body">{job.body}</p>
-                <Link href={`/career/${job.slug}`} className="dyas-sheet-card__link">
-                  Read more
+                <h2 className="dyas-sheet-card__title">Nothing listed</h2>
+                <p className="dyas-sheet-card__body">{copy.empty}</p>
+                <Link href="/contact-us" className="dyas-sheet-card__link">
+                  Contact us
                 </Link>
               </article>
-            ))}
+            )}
           </div>
           <aside>
             <PlusBox>

@@ -521,13 +521,8 @@ export const pages = {
     description: "Open roles at Dyas AI. Join a London-based team building AI agents, apps, and automation.",
     breadcrumb: ["Home", "Career"],
     heading: "Career",
-    jobs: [
-      {
-        slug: "ui-ux-designer",
-        title: "UI & UX Designer",
-        body: "Are you passionate about creating intuitive, beautiful, and user-friendly digital experiences? At Dyas AI, we're building intelligent web and mobile applications powered by the latest AI technologies — and we're looking for a UI/UX Designer to join our growing team.",
-      },
-    ],
+    empty: "No open roles right now. If you think you’d fit, write to us anyway.",
+    jobs: [] as { slug: string; title: string; body: string }[],
   },
   blog: {
     title: "AI Blog | Insights & Trends in AI & Automation - Dyas AI",
