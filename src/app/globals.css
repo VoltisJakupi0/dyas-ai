@@ -1500,13 +1500,13 @@ body::before {
 .dyas-products__panel.is-folet .dyas-products__media {
   min-height: 0;
   width: 100%;
-  aspect-ratio: 4 / 5;
-  background: #0d1a0c;
+  aspect-ratio: 910 / 1024;
+  background: transparent;
   overflow: hidden;
 }
 
 .dyas-products__panel.is-folet .dyas-products__img {
-  object-fit: contain;
+  object-fit: cover;
   object-position: center center;
 }
 
@@ -1743,12 +1743,12 @@ body::before {
 }
 
 .dyas-product-story.is-folet .dyas-product-story__hero {
-  aspect-ratio: 4 / 5;
-  background: #0d1a0c;
+  aspect-ratio: 910 / 1024;
+  background: transparent;
 }
 
 .dyas-product-story.is-folet .dyas-product-story__hero-img {
-  object-fit: contain;
+  object-fit: cover;
   object-position: center center;
 }
 
@@ -1947,7 +1947,7 @@ body::before {
   }
 
   .dyas-products__panel.is-folet .dyas-products__media {
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 910 / 1024;
   }
 
   .dyas-products__media--raft {
@@ -5902,6 +5902,11 @@ body::before {
   grid-template-columns: repeat(3, 1fr);
 }
 
+/* 4th service (Web & Mobile) sits centered under AI Agents */
+.dyas-sheet__grid--services > :nth-child(4) {
+  grid-column: 2;
+}
+
 .dyas-sheet__grid--cards {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
 }
@@ -6127,12 +6132,24 @@ body::before {
   .dyas-sheet__grid--services {
     grid-template-columns: 1fr 1fr;
   }
+
+  .dyas-sheet__grid--services > :nth-child(4) {
+    grid-column: 1 / -1;
+    width: min(100%, calc((100% - var(--sheet-gap, 16px)) / 2));
+    margin-inline: auto;
+  }
 }
 
 @media (max-width: 640px) {
   .dyas-sheet__grid--services,
   .dyas-sheet__grid--plans {
     grid-template-columns: 1fr;
+  }
+
+  .dyas-sheet__grid--services > :nth-child(4) {
+    grid-column: auto;
+    width: 100%;
+    margin-inline: 0;
   }
 
   .dyas-acronym {

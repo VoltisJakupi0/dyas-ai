@@ -78,8 +78,9 @@ export function ProductStory({ item, index = 0 }: { item: Item; index?: number }
               <Image
                 src={item.image}
                 alt=""
-                width={1200}
-                height={1500}
+                width={item.id === "folet" ? 910 : 1200}
+                height={item.id === "folet" ? 1024 : 1500}
+                quality={100}
                 className="dyas-product-story__hero-img"
                 sizes="(max-width: 900px) 100vw, 48vw"
                 priority={index === 0}
