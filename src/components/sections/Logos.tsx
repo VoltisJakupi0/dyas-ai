@@ -1,21 +1,24 @@
 import type { CSSProperties } from "react";
-import { logos } from "@/lib/site";
+import { logos, type LogoItem } from "@/lib/site";
 
-function LogoItem({
+function logoKey(item: LogoItem) {
+  return "src" in item && item.src ? item.src : item.text;
+}
+
+function LogoItemView({
   item,
   dup,
 }: {
-  item: (typeof logos.items)[number];
+  item: LogoItem;
   dup?: string;
 }) {
-  const style = { "--logo-s": item.scale } as CSSProperties;
+  const style = { "--logo-s": item.scale ?? 1 } as CSSProperties;
   const isDup = Boolean(dup);
-  const native = "native" in item && item.native;
+  const native = "native" in item && Boolean(item.native);
 
   if ("text" in item && item.text) {
     return (
       <span
-        key={dup ? `${item.text}-${dup}` : item.text}
         className={["dyas-logos__text", isDup ? "is-dup" : null].filter(Boolean).join(" ")}
         style={style}
         aria-hidden={isDup ? true : undefined}
@@ -29,7 +32,6 @@ function LogoItem({
 
   return (
     <img
-      key={dup ? `${item.src}-${dup}` : item.src}
       src={item.src}
       alt={isDup ? "" : item.alt}
       width={120}
@@ -50,7 +52,11 @@ export function Logos() {
     <div className="dyas-logos dyas-hero-area__logos dyas-reveal" style={{ "--reveal-delay": "240ms" } as CSSProperties}>
       <p className="dyas-logos__label">{logos.label}</p>
       <div className="dyas-logos__track">
-        {dups.flatMap((dup) => logos.items.map((item) => <LogoItem key={`${"src" in item ? item.src : item.text}-${dup ?? "main"}`} item={item} dup={dup} />))}
+        {dups.flatMap((dup) =>
+          logos.items.map((item) => (
+            <LogoItemView key={`${logoKey(item)}-${dup ?? "main"}`} item={item} dup={dup} />
+          )),
+        )}
       </div>
     </div>
   );

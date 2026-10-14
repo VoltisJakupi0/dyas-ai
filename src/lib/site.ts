@@ -102,7 +102,14 @@ export const hero = {
   },
 };
 
-export const logos = {
+export type LogoItem =
+  | { src: string; alt: string; scale?: number; native?: boolean; text?: never }
+  | { text: string; scale?: number; src?: never; alt?: never; native?: never };
+
+export const logos: {
+  label: string;
+  items: LogoItem[];
+} = {
   label: "Trusted by teams shipping production solutions",
   items: [
     { src: "/logos/albinfo-logo.png", alt: "albinfo.ch", scale: 4.2, native: true },
