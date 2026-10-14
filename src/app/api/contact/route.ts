@@ -61,15 +61,12 @@ async function readBody(req: Request): Promise<{ body: Body; native: boolean }> 
   };
 }
 
-function mailtoUrl(fields: { name: string; email: string; company: string; message: string }) {
-  const subject = encodeURIComponent(`New inquiry from ${fields.name}`);
-  const body = encodeURIComponent(text(fields));
-  return `mailto:${site.email}?subject=${subject}&body=${body}`;
-}
-
 async function sendWithResend(fields: { name: string; email: string; company: string; message: string }) {
-  const apiKey = process.env["RESEND_API_KEY"];
-  if (!apiKey) return false;
+  const apiKey = process.env["RESEND_API_KEY"]?.trim();
+  if (!apiKey) {
+    console.error("[contact] RESEND_API_KEY missing");
+    return false;
+  }
 
   const resend = new Resend(apiKey);
   const content = text(fields);
@@ -78,7 +75,7 @@ async function sendWithResend(fields: { name: string; email: string; company: st
 <p><strong>Company:</strong> ${esc(fields.company || "—")}</p>
 <p>${esc(fields.message).replace(/\n/g, "<br>")}</p>`;
 
-  const preferred = process.env["EMAIL_FROM"] || "Dyas AI <beth.t@example.com>";
+  const preferred = process.env["EMAIL_FROM"]?.trim() || "Dyas AI <beth.t@example.com>";
   const froms = [...new Set([preferred, "Dyas AI <beth.t@example.com>"])];
 
   for (const from of froms) {
@@ -152,6 +149,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  if (native) return NextResponse.redirect(mailtoUrl(payload), 303);
-  return NextResponse.json({ ok: false, mailto: true });
+  if (native) return NextResponse.redirect(new URL("/contact-us?error=1", req.url), 303);
+  return NextResponse.json({ ok: false }, { status: 502 });
 }

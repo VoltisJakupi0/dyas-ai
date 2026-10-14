@@ -159,7 +159,23 @@ export function Hero() {
               </h1>
               <div className="dyas-hero__actions dyas-reveal" style={{ "--reveal-delay": "240ms" } as CSSProperties}>
                 <Button href={site.ctaHref}>{site.ctaLabel}</Button>
-                <Button href={hero.ctaHref} variant="ghost">
+                <Button
+                  href={hero.ctaHref}
+                  variant="ghost"
+                  onClick={(e) => {
+                    // Jump past the showreel (zoom + text beats) straight to work.
+                    if (hero.ctaHref !== "#work") return;
+                    e.preventDefault();
+                    const work = document.getElementById("work");
+                    if (!work) return;
+                    const html = document.documentElement;
+                    const prev = html.style.scrollBehavior;
+                    html.style.scrollBehavior = "auto";
+                    work.scrollIntoView({ behavior: "auto", block: "start" });
+                    html.style.scrollBehavior = prev;
+                    history.replaceState(null, "", "#work");
+                  }}
+                >
                   {hero.cta}
                 </Button>
               </div>

@@ -261,81 +261,81 @@ function SceneSurfaces() {
 }
 
 /* E-Commerce — catalogue to checkout, with the exceptions surfaced. */
-function SceneShop() {
-  return (
-    <>
-      <Brand icon="cart" title="Order Pipeline" sub="Catalogue to checkout" />
-      <Rows
-        items={[
-          {
-            icon: "box",
-            title: "Catalogue",
-            sub: "1,240 SKUs in sync",
-            state: "done",
-            count: "OK",
-          },
-          {
-            icon: "alert",
-            title: "Fulfilment",
-            sub: "2 orders need review",
-            state: "live",
-            count: "2",
-          },
-        ]}
-      />
-      <div className="dyas-iso__stat dyas-iso__stat--foot">
-        <strong>312</strong>
-        <span>orders routed today</span>
-      </div>
-    </>
-  );
-}
+// function SceneShop() {
+//   return (
+//     <>
+//       <Brand icon="cart" title="Order Pipeline" sub="Catalogue to checkout" />
+//       <Rows
+//         items={[
+//           {
+//             icon: "box",
+//             title: "Catalogue",
+//             sub: "1,240 SKUs in sync",
+//             state: "done",
+//             count: "OK",
+//           },
+//           {
+//             icon: "alert",
+//             title: "Fulfilment",
+//             sub: "2 orders need review",
+//             state: "live",
+//             count: "2",
+//           },
+//         ]}
+//       />
+//       <div className="dyas-iso__stat dyas-iso__stat--foot">
+//         <strong>312</strong>
+//         <span>orders routed today</span>
+//       </div>
+//     </>
+//   );
+// }
 
 /* UI / UX — the system behind the screens, mid-edit. */
-function SceneDesign() {
-  return (
-    <>
-      <Brand icon="pen" title="Design System" sub="Frames, tokens, handoff" />
-      <div className="dyas-iso__board">
-        <aside>
-          <span>
-            <i />
-            Header
-          </span>
-          <span className="on">
-            <i />
-            Hero
-          </span>
-          <span>
-            <i />
-            Cards
-          </span>
-        </aside>
-        <div>
-          <b />
-          <b className="on" />
-          <b />
-          <b />
-        </div>
-      </div>
-      <div className="dyas-iso__swatches">
-        <span style={{ "--c": "#111111" } as CSSProperties} />
-        <span style={{ "--c": "#5f5c55" } as CSSProperties} />
-        <span style={{ "--c": "#b3afa4" } as CSSProperties} />
-        <span style={{ "--c": "#e6e3dc" } as CSSProperties} />
-        <span className="on" style={{ "--c": "var(--brand)" } as CSSProperties} />
-      </div>
-    </>
-  );
-}
+// function SceneDesign() {
+//   return (
+//     <>
+//       <Brand icon="pen" title="Design System" sub="Frames, tokens, handoff" />
+//       <div className="dyas-iso__board">
+//         <aside>
+//           <span>
+//             <i />
+//             Header
+//           </span>
+//           <span className="on">
+//             <i />
+//             Hero
+//           </span>
+//           <span>
+//             <i />
+//             Cards
+//           </span>
+//         </aside>
+//         <div>
+//           <b />
+//           <b className="on" />
+//           <b />
+//           <b />
+//         </div>
+//       </div>
+//       <div className="dyas-iso__swatches">
+//         <span style={{ "--c": "#111111" } as CSSProperties} />
+//         <span style={{ "--c": "#5f5c55" } as CSSProperties} />
+//         <span style={{ "--c": "#b3afa4" } as CSSProperties} />
+//         <span style={{ "--c": "#e6e3dc" } as CSSProperties} />
+//         <span className="on" style={{ "--c": "var(--brand)" } as CSSProperties} />
+//       </div>
+//     </>
+//   );
+// }
 
 const SCENES: { title: string; panel: ReactNode }[] = [
   { title: "AI-Powered Solutions", panel: <SceneFlow /> },
   { title: "AI Agents", panel: <SceneAgents /> },
   { title: "AI Chatbots", panel: <SceneChat /> },
   { title: "Web & Mobile App Development", panel: <SceneSurfaces /> },
-  { title: "E-Commerce Development", panel: <SceneShop /> },
-  { title: "UI / UX Services", panel: <SceneDesign /> },
+  // { title: "E-Commerce Development", panel: <SceneShop /> },
+  // { title: "UI / UX Services", panel: <SceneDesign /> },
 ];
 
 const COUNT = SCENES.length;

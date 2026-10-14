@@ -31,20 +31,28 @@ export function supportsScrollTimeline() {
 export function observeInView(
   nodes: Iterable<Element>,
   onEnter: (el: Element) => void,
-  options?: IntersectionObserverInit,
+  options?: IntersectionObserverInit & {
+    once?: boolean;
+    onLeave?: (el: Element) => void;
+  },
 ) {
   const list = [...nodes];
   if (!list.length) return () => {};
 
+  const { once = true, onLeave, ...ioOptions } = options ?? {};
+
   const io = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        onEnter(entry.target);
-        io.unobserve(entry.target);
+        if (entry.isIntersecting) {
+          onEnter(entry.target);
+          if (once) io.unobserve(entry.target);
+          continue;
+        }
+        if (!once) onLeave?.(entry.target);
       }
     },
-    { rootMargin: "0px 0px -6% 0px", threshold: 0.08, ...options },
+    { rootMargin: "0px 0px -6% 0px", threshold: 0.08, ...ioOptions },
   );
 
   for (const n of list) io.observe(n);
@@ -55,7 +63,7 @@ export function observeInView(
       const r = n.getBoundingClientRect();
       if (r.top < h && r.bottom > 0) {
         onEnter(n);
-        io.unobserve(n);
+        if (once) io.unobserve(n);
       }
     }
   });

@@ -3,18 +3,8 @@
 import { useState, type FormEvent } from "react";
 import { site } from "@/lib/site";
 
-function openMailto(fields: { name: string; email: string; company: string; message: string }) {
-  const subject = encodeURIComponent(`New inquiry from ${fields.name}`);
-  const body = encodeURIComponent(
-    [`Name: ${fields.name}`, `Email: ${fields.email}`, `Company: ${fields.company || "—"}`, "", fields.message].join(
-      "\n",
-    ),
-  );
-  window.location.href = `mailto:${site.email}?subject=${subject}&body=${body}`;
-}
-
 export function ContactForm({ cta }: { cta: string }) {
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "mail" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -37,27 +27,20 @@ export function ContactForm({ cta }: { cta: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(fields),
       });
-      const json = (await res.json()) as { ok?: boolean; mailto?: boolean };
-      if (json.ok) {
+      const json = (await res.json()) as { ok?: boolean };
+      if (res.ok && json.ok) {
         form.reset();
         setStatus("sent");
         return;
       }
-      if (json.mailto) {
-        openMailto(fields);
-        form.reset();
-        setStatus("mail");
-        return;
-      }
       setStatus("error");
     } catch {
-      openMailto(fields);
-      setStatus("mail");
+      setStatus("error");
     }
   }
 
   return (
-    <form className="mt-8 space-y-4" action="/api/contact" method="post" onSubmit={onSubmit}>
+    <form className="mt-8 space-y-4" onSubmit={onSubmit}>
       <input type="text" name="honey" className="dyas-visually-hidden" tabIndex={-1} autoComplete="off" />
 
       <div>
@@ -116,14 +99,13 @@ export function ContactForm({ cta }: { cta: string }) {
           Request sent. We’ll get back to you shortly.
         </p>
       ) : null}
-      {status === "mail" ? (
-        <p className="text-body-16-light" role="status">
-          Your email app should open with a message to {site.email}. Send it to complete the request.
-        </p>
-      ) : null}
       {status === "error" ? (
         <p className="text-body-16-light" role="status">
-          Couldn’t send. Email us at {site.email}.
+          Couldn’t send. Email us at{" "}
+          <a className="underline underline-offset-4" href={`mailto:${site.email}`}>
+            {site.email}
+          </a>
+          .
         </p>
       ) : null}
       <button type="submit" className="pgp-btn pgp-btn--primary" disabled={status === "sending"}>

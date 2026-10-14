@@ -58,29 +58,30 @@ export const services = [
     short: "From startup MVPs to complex platforms — we design and build apps that are fast and ready to grow.",
     ticker: "WEB & MOBILE APPS",
   },
-  {
-    slug: "e-commerce-development",
-    title: "E-Commerce Development",
-    href: "/service/e-commerce-development",
-    icon: "cart" as const,
-    short:
-      "Launch or scale your online store with modern, conversion-driven e-commerce solutions tailored for seamless shopping and business growth.",
-    ticker: "E-COMMERCE",
-  },
-  {
-    slug: "ui-ux-services",
-    title: "UI / UX Services",
-    href: "/service/ui-ux-services",
-    icon: "pen" as const,
-    short:
-      "User-focused design that blends beauty with functionality—crafting experiences that engage, convert, and retain your audience effortlessly.",
-    ticker: "UI / UX",
-  },
+  // {
+  //   slug: "e-commerce-development",
+  //   title: "E-Commerce Development",
+  //   href: "/service/e-commerce-development",
+  //   icon: "cart" as const,
+  //   short:
+  //     "Launch or scale your online store with modern, conversion-driven e-commerce solutions tailored for seamless shopping and business growth.",
+  //   ticker: "E-COMMERCE",
+  // },
+  // {
+  //   slug: "ui-ux-services",
+  //   title: "UI / UX Services",
+  //   href: "/service/ui-ux-services",
+  //   icon: "pen" as const,
+  //   short:
+  //     "User-focused design that blends beauty with functionality—crafting experiences that engage, convert, and retain your audience effortlessly.",
+  //   ticker: "UI / UX",
+  // },
 ];
 
 export const nav = {
   links: [
     { label: "Services", href: "/services", menu: "services" as const },
+    { label: "Products", href: "/products" },
     { label: "Pricing Plans", href: "/pricing-plans" },
     { label: "About Us", href: "/about-us" },
     { label: "Contact Us", href: "/contact-us" },
@@ -102,17 +103,118 @@ export const hero = {
 };
 
 export const logos = {
-  label: "Trusted by teams shipping production AI",
+  label: "Trusted by teams shipping production solutions",
   items: [
-    { src: "/logos/albinfo-2.png", alt: "albinfo.ch", scale: 2.4, native: true },
-    { src: "/logos/think-b.png", alt: "Think B Agency", scale: 1.35 },
-    { src: "/logos/eptura.png", alt: "Eptura", scale: 3, native: true },
-    { src: "/logos/bankstreet.png", alt: "bankstreet", scale: 1.7 },
+    { src: "/logos/albinfo-logo.png", alt: "albinfo.ch", scale: 4.2, native: true },
+    { src: "/logos/spaceiq.png", alt: "SpaceIQ", scale: 2.2, native: true },
+    { src: "/logos/coinkit-2.png", alt: "CoinKit", scale: 4.4, native: true },
+    { src: "/logos/europcar.png", alt: "Europcar", scale: 2.2, native: true },
+    { src: "/logos/maverick-3.png", alt: "Maverick Concierge", scale: 2.8, native: true },
+    { src: "/logos/think-b-logo.png", alt: "think b", scale: 2, native: true },
+  ],
+};
+
+export const products = {
+  label: "Our products",
+  headline: "Products we build and run",
+  sub: "Powered by Dyas AI",
+  items: [
+    {
+      id: "folet",
+      name: "Folet",
+      tagline: "Travel should be more than a stay — it should be an experience",
+      pitch:
+        "An AI-powered marketplace for villas and unique nature stays — from luxury villas and chalets to eco retreats.",
+      body: "Folet is an AI-powered marketplace for villas. It connects travelers seeking meaningful escapes with hosts offering unique places in beautiful natural destinations. By making nature stays easier to discover and book, Folet helps people reconnect with nature and experience travel in a more authentic way. We believe travel should be more than a stay — it should be an experience.",
+      logo: "/products/folet/folet-black.png",
+      logoAlt: "Folet",
+      image: "/products/folet/villa-hero.jpg",
+      gallery: [
+        "/products/folet/villa-hero.jpg",
+        "/products/folet/villa-bg-2.jpg",
+        "/products/folet/villa-bg.png",
+      ],
+      chips: ["AI discovery", "Nature stays", "Villas & chalets", "Eco retreats", "Live booking"],
+      stats: [
+        { label: "Focus", value: "Nature" },
+        { label: "Stays", value: "Unique" },
+        { label: "Built by", value: "Dyas" },
+      ],
+      highlights: [
+        {
+          title: "Discover with AI",
+          body: "Find the right nature stay faster — luxury villas, chalets, and eco retreats matched to how you travel.",
+        },
+        {
+          title: "Meaningful escapes",
+          body: "Built for travelers who want more than a room: quiet, place, and time outdoors.",
+        },
+        {
+          title: "Hosts with unique places",
+          body: "Connect guests with hosts offering distinctive stays in beautiful natural destinations.",
+        },
+        {
+          title: "Book in one flow",
+          body: "Make nature stays easier to discover and reserve — without losing the authenticity of the place.",
+        },
+      ],
+      capabilities: [
+        "AI-powered discovery for unique stays in nature",
+        "Luxury villas, chalets, and eco retreats in one marketplace",
+        "Connects travelers with hosts in natural destinations",
+        "Booking flow designed for authentic, experience-led trips",
+        "Product built and operated by Dyas",
+      ],
+      cta: "Visit Folet",
+      ctaHref: "https://folet.app",
+      exploreHref: "/products#folet",
+      tone: "light" as const,
+    },
+    {
+      id: "raft",
+      name: "Raft AI",
+      tagline: "Shelf intelligence from store cameras",
+      pitch:
+        "Cameras watch the shelf. AI flags out-of-stock, low facing, and planogram drift — then opens a task for the floor before sales walk out the door.",
+      body: "Raft AI turns store cameras into a shelf monitoring loop for FMCG markets. Train the planogram, watch facings continuously, detect gaps and volume issues, and push work to staff. Market managers run the store; brand managers see their SKUs without the noise; workers get a clear task queue instead of a random walk of the aisle.",
+      logo: "/products/raft/camera.png",
+      logoAlt: "Raft AI",
+      image: "/products/raft/hero-scan-poster.jpg",
+      gallery: [
+        "/products/raft/hero-scan-poster.jpg",
+        "/products/raft/shelf-oos.png",
+        "/products/raft/shelf-facing.png",
+        "/products/raft/sku-recognition.png",
+      ],
+      chips: ["Out of stock", "Low facing", "Planogram", "Volume", "Tasks"],
+      stats: [
+        { label: "Signal", value: "Camera" },
+        { label: "Action", value: "Tasks" },
+        { label: "Roles", value: "4" },
+      ],
+      highlights: [
+        { title: "Out of stock & low facing", body: "Detect empty and thin facings from the aisle camera before the next store walk." },
+        { title: "Planogram compliance", body: "Compare the live shelf to the layout you trained — SKU, facing count, and drift." },
+        { title: "Worker task loop", body: "Two bad reads become a task. Staff claim it, fix it, and the camera closes the loop." },
+        { title: "Market & brand views", body: "Ops see the whole store; brands see their own assortment across integrated markets." },
+      ],
+      capabilities: [
+        "Out-of-stock and low-facing detection from aisle cameras",
+        "Planogram training and ongoing compliance scoring",
+        "Volume and coverage signals routed into worker tasks",
+        "Roles for super admin, market manager, worker, and brand manager",
+        "Dashboard filtered for market ops and brand teams",
+      ],
+      cta: "Talk about Raft",
+      ctaHref: "/contact-us",
+      exploreHref: "/products#raft",
+      tone: "dark" as const,
+    },
   ],
 };
 
 export const work = {
-  heading: "Recent work",
+  heading: "Agents in production",
   cases: [
     {
       name: "AI Voice Receptionist Agent",
@@ -239,10 +341,10 @@ export const stats = {
       label: "Across web, chat, and internal operations",
     },
     {
-      value: "6",
+      value: "4",
       suffix: "",
-      title: "Services from agents to storefronts",
-      label: "AI, apps, commerce, and design under one team",
+      title: "Services from agents to apps",
+      label: "AI, agents, chatbots, and web & mobile under one team",
     },
   ],
 };
@@ -388,6 +490,7 @@ export const footer = {
       title: "Menu",
       links: [
         { label: "Services", href: "/services" },
+        { label: "Products", href: "/products" },
         { label: "Pricing Plans", href: "/pricing-plans" },
         { label: "About Us", href: "/about-us" },
         { label: "Contact Us", href: "/contact-us" },
@@ -408,10 +511,18 @@ export const footer = {
       ],
     },
   ],
-  copyright: "©2025 Powered by Dyas AI",
+  copyright: "©2026 Powered by Dyas AI",
 };
 
 export const pages = {
+  products: {
+    title: "Products | Folet & Raft AI - Dyas AI",
+    description:
+      "Products we build and run: Folet, the AI platform for unique nature stays, and Raft AI for shelf monitoring from store cameras.",
+    breadcrumb: ["Home", "Products"],
+    headline: "Products we build and run",
+    sub: "Powered by Dyas AI",
+  },
   services: {
     title: "AI Services | AI Agents, AI Chatbots, Web & Mobile Development - Dyas AI",
     description:
@@ -554,6 +665,7 @@ export const routes = [
   "/",
   "/services",
   ...services.map((s) => s.href),
+  "/products",
   "/pricing-plans",
   "/about-us",
   "/contact-us",

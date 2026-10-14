@@ -1,69 +1,56 @@
 import type { CSSProperties } from "react";
 import { logos } from "@/lib/site";
 
+function LogoItem({
+  item,
+  dup,
+}: {
+  item: (typeof logos.items)[number];
+  dup?: string;
+}) {
+  const style = { "--logo-s": item.scale } as CSSProperties;
+  const isDup = Boolean(dup);
+  const native = "native" in item && item.native;
+
+  if ("text" in item && item.text) {
+    return (
+      <span
+        key={dup ? `${item.text}-${dup}` : item.text}
+        className={["dyas-logos__text", isDup ? "is-dup" : null].filter(Boolean).join(" ")}
+        style={style}
+        aria-hidden={isDup ? true : undefined}
+      >
+        {item.text}
+      </span>
+    );
+  }
+
+  if (!("src" in item) || !item.src) return null;
+
+  return (
+    <img
+      key={dup ? `${item.src}-${dup}` : item.src}
+      src={item.src}
+      alt={isDup ? "" : item.alt}
+      width={120}
+      height={20}
+      decoding="async"
+      loading="lazy"
+      fetchPriority={isDup ? "low" : undefined}
+      className={[native ? "is-native" : null, isDup ? "is-dup" : null].filter(Boolean).join(" ") || undefined}
+      aria-hidden={isDup ? true : undefined}
+      style={style}
+    />
+  );
+}
+
 export function Logos() {
+  const dups = [undefined, "dup", "dup2", "dup3"] as const;
   return (
     <div className="dyas-logos dyas-hero-area__logos dyas-reveal" style={{ "--reveal-delay": "240ms" } as CSSProperties}>
       <p className="dyas-logos__label">{logos.label}</p>
       <div className="dyas-logos__track">
-        {logos.items.map((item) => (
-          <img
-            key={item.src}
-            src={item.src}
-            alt={item.alt}
-            width={120}
-            height={20}
-            decoding="async"
-            loading="lazy"
-            className={"native" in item && item.native ? "is-native" : undefined}
-            style={{ "--logo-s": item.scale } as CSSProperties}
-          />
-        ))}
-        {logos.items.map((item) => (
-          <img
-            key={`${item.src}-dup`}
-            className={"native" in item && item.native ? "is-dup is-native" : "is-dup"}
-            src={item.src}
-            alt=""
-            width={120}
-            height={20}
-            decoding="async"
-            loading="lazy"
-            fetchPriority="low"
-            aria-hidden="true"
-            style={{ "--logo-s": item.scale } as CSSProperties}
-          />
-        ))}
-        {logos.items.map((item) => (
-          <img
-            key={`${item.src}-dup2`}
-            className={"native" in item && item.native ? "is-dup is-native" : "is-dup"}
-            src={item.src}
-            alt=""
-            width={120}
-            height={20}
-            decoding="async"
-            loading="lazy"
-            fetchPriority="low"
-            aria-hidden="true"
-            style={{ "--logo-s": item.scale } as CSSProperties}
-          />
-        ))}
-        {logos.items.map((item) => (
-          <img
-            key={`${item.src}-dup3`}
-            className={"native" in item && item.native ? "is-dup is-native" : "is-dup"}
-            src={item.src}
-            alt=""
-            width={120}
-            height={20}
-            decoding="async"
-            loading="lazy"
-            fetchPriority="low"
-            aria-hidden="true"
-            style={{ "--logo-s": item.scale } as CSSProperties}
-          />
-        ))}
+        {dups.flatMap((dup) => logos.items.map((item) => <LogoItem key={`${"src" in item ? item.src : item.text}-${dup ?? "main"}`} item={item} dup={dup} />))}
       </div>
     </div>
   );

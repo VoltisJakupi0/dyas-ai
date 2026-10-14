@@ -331,145 +331,146 @@ export const servicePages: ServicePage[] = [
       },
     ],
   },
-  {
-    slug: "e-commerce-development",
-    title: "E-Commerce Development",
-    metaTitle: "E-Commerce Development - Dyas AI",
-    metaDescription: "Build powerful e-commerce stores with secure payments, seamless UX, and scalable performance.",
-    breadcrumb: ["Home", "Service", "E-Commerce Development"],
-    ...shared,
-    sectionHeadline: "From Idea to Storefront — Online Shops That Sell",
-    body: [
-      "Launching or scaling an online store comes with many challenges from platform selection to workflows, design, and functionality. At Dyas AI, we provide end-to-end e-commerce development services that ensure your store is fast, secure, and aligned with your brand.",
-      "Whether building from scratch or leveraging platforms like Shopify or WooCommerce, we deliver custom or theme-based designs tailored to your products and audience. We manage setup, structure, design, configuration, and optimization so you can focus on growing your business.",
-    ],
-    approachTitle: "Our Approach",
-    approach: [
-      "Platform Selection & Setup: Choose the right e-commerce platform for your needs.",
-      "Custom or Template Design: Tailored UI/UX that reflects your brand identity.",
-      "Store Configuration: Product uploads, categories, and navigation structure.",
-      "Payment, Shipping & Taxes: Fully integrated and secure checkout processes.",
-      "Optimization & Performance: Fast-loading, mobile-responsive, and SEO-ready.",
-    ],
-    faqSub: "Building Smart Stores, Starting with Your Questions",
-    faqs: [
-      {
-        q: "Do I need to choose a platform before starting?",
-        a: "No — we guide you on the best platform based on your goals, budget, and scalability needs.",
-      },
-      {
-        q: "Can I use a pre-made theme, or do I need a custom design?",
-        a: "Both options are available. We can work with your chosen theme or design a fully custom interface.",
-      },
-      {
-        q: "Do you handle product uploads and organization?",
-        a: "Yes, we manage product data, categories, and catalog setup for a smooth launch.",
-      },
-      {
-        q: "Can I manage my store after launch?",
-        a: "Absolutely. We provide training and intuitive tools for ongoing store management.",
-      },
-      {
-        q: "Do you integrate payments, taxes, and shipping?",
-        a: "Yes. We'll help you integrate payment gateways, set up tax rules, and configure shipping zones so your store is ready to sell.",
-      },
-    ],
-    bannerHeadline: "E-commerce Solutions That Build, Scale & Simplify",
-    bannerSub: "We design and build online stores that are easy to use, look great, and are ready to grow with your business.",
-    pillars: [
-      {
-        title: "Custom or Platform-Based? You Choose",
-        body: "Whether you want a store developed from the ground up or built on platforms like Shopify or WooCommerce, we deliver clean, scalable setups tailored to your brand.",
-      },
-      {
-        title: "Smart Product Structure",
-        body: "We organize your products with thoughtful categories, filters, and layouts to ensure users find what they need — and convert quickly.",
-      },
-      {
-        title: "Ready to Grow",
-        body: "We build mobile-friendly, high-performance stores that keep up with your growth — no matter the traffic, no matter the season.",
-      },
-    ],
-  },
-  {
-    slug: "ui-ux-services",
-    title: "UI / UX Services",
-    metaTitle: "UI / UX Services - Dyas AI",
-    metaDescription:
-      "Delivering intuitive and engaging UI/UX design services that enhance user journeys, improve conversions, and align perfectly with your brand identity.",
-    breadcrumb: ["Home", "Service", "UI / UX Services"],
-    ...shared,
-    sectionHeadline: "Design That Drives Interaction, Retention, and Growth",
-    body: [
-      "We don't just make things look good, we craft digital experiences that solve user problems, reduce friction, and support your business goals. Whether you're launching a new product, improving an existing interface, or scaling up your platform, our design process is built to deliver measurable results.",
-    ],
-    offerTitle: "What We Offer",
-    offers: [
-      {
-        title: "User Experience Research & Strategy",
-        body: "We begin with deep discovery analyzing your users, goals, and competitors. Through user interviews, analytics, and journey mapping, we build data-backed design strategies that align with your objectives.",
-      },
-      {
-        title: "Wireframes & UX Architecture",
-        body: "Before we design the look, we structure the experience. We create wireframes and navigation flows that outline every interaction, ensuring your app or site feels intuitive from the first click.",
-      },
-      {
-        title: "Interface Design (UI)",
-        body: "Pixel-perfect visuals that reflect your brand and delight your users. We focus on hierarchy, consistency, responsiveness, and accessibility to make your product beautiful and usable.",
-      },
-      {
-        title: "Interactive Prototypes",
-        body: "Get a feel for your product before it's built. We deliver clickable, animated prototypes that simulate user flows and help you test ideas quickly and clearly — ideal for investors, developers, and stakeholders.",
-      },
-      {
-        title: "Design Systems & Component Libraries",
-        body: "We build scalable, reusable design systems that your dev team can easily implement. This ensures consistency and speeds up future builds, updates, and collaborations.",
-      },
-      {
-        title: "Usability Testing & Iteration",
-        body: "We test everything — with real users or stakeholders — and refine designs based on feedback. No assumptions, just insights.",
-      },
-      {
-        title: "UI/UX Audits & Redesigns",
-        body: "Already have a product? We assess its design from a usability, conversion, and accessibility standpoint — then create a roadmap for improvement.",
-      },
-    ],
-    faqSub: "Design Shouldn't Be Confusing. Let's Make It Clear.",
-    faqs: [
-      {
-        q: "Which tools do you use for UI/UX design?",
-        a: "We primarily use Figma. All files are shareable and developer-ready.",
-      },
-      {
-        q: "Do you deliver responsive/mobile-first designs?",
-        a: "Always. Every design is created with mobile, tablet, and desktop users in mind. We ensure smooth usability across all screen sizes.",
-      },
-      {
-        q: "Will I get a prototype before development?",
-        a: "Yes. We provide interactive prototypes so you can test and review the user experience before any development begins. This reduces guesswork and ensures alignment early on.",
-      },
-      {
-        q: "Can you redesign my existing website or app?",
-        a: "Yes. We offer UI/UX audits and redesigns for existing platforms. We'll identify usability issues, modernize your design, and optimize the user experience to improve conversions and engagement.",
-      },
-    ],
-    bannerHeadline: "Smart Design & Seamless Interfaces — Built to Convert.",
-    bannerSub: "From user flows to final clicks — we design digital experiences that work.",
-    pillars: [
-      {
-        title: "Research-Driven Strategy",
-        body: "We start with understanding your users and your goals — mapping out clear user journeys to inform a design strategy that drives real results.",
-      },
-      {
-        title: "Modern, Scalable Design Systems",
-        body: "From wireframes to high-fidelity visuals, we create consistent design systems tailored for web or mobile, adaptable across platforms.",
-      },
-      {
-        title: "Usability Meets Aesthetics",
-        body: "Good design isn't just about looking nice — we combine clean visuals with smart interactions to improve functionality and retain users.",
-      },
-    ],
-  },
+//   {
+//     slug: "e-commerce-development",
+//     title: "E-Commerce Development",
+//     metaTitle: "E-Commerce Development - Dyas AI",
+//     metaDescription: "Build powerful e-commerce stores with secure payments, seamless UX, and scalable performance.",
+//     breadcrumb: ["Home", "Service", "E-Commerce Development"],
+//     ...shared,
+//     sectionHeadline: "From Idea to Storefront — Online Shops That Sell",
+//     body: [
+//       "Launching or scaling an online store comes with many challenges from platform selection to workflows, design, and functionality. At Dyas AI, we provide end-to-end e-commerce development services that ensure your store is fast, secure, and aligned with your brand.",
+//       "Whether building from scratch or leveraging platforms like Shopify or WooCommerce, we deliver custom or theme-based designs tailored to your products and audience. We manage setup, structure, design, configuration, and optimization so you can focus on growing your business.",
+//     ],
+//     approachTitle: "Our Approach",
+//     approach: [
+//       "Platform Selection & Setup: Choose the right e-commerce platform for your needs.",
+//       "Custom or Template Design: Tailored UI/UX that reflects your brand identity.",
+//       "Store Configuration: Product uploads, categories, and navigation structure.",
+//       "Payment, Shipping & Taxes: Fully integrated and secure checkout processes.",
+//       "Optimization & Performance: Fast-loading, mobile-responsive, and SEO-ready.",
+//     ],
+//     faqSub: "Building Smart Stores, Starting with Your Questions",
+//     faqs: [
+//       {
+//         q: "Do I need to choose a platform before starting?",
+//         a: "No — we guide you on the best platform based on your goals, budget, and scalability needs.",
+//       },
+//       {
+//         q: "Can I use a pre-made theme, or do I need a custom design?",
+//         a: "Both options are available. We can work with your chosen theme or design a fully custom interface.",
+//       },
+//       {
+//         q: "Do you handle product uploads and organization?",
+//         a: "Yes, we manage product data, categories, and catalog setup for a smooth launch.",
+//       },
+//       {
+//         q: "Can I manage my store after launch?",
+//         a: "Absolutely. We provide training and intuitive tools for ongoing store management.",
+//       },
+//       {
+//         q: "Do you integrate payments, taxes, and shipping?",
+//         a: "Yes. We'll help you integrate payment gateways, set up tax rules, and configure shipping zones so your store is ready to sell.",
+//       },
+//     ],
+//     bannerHeadline: "E-commerce Solutions That Build, Scale & Simplify",
+//     bannerSub: "We design and build online stores that are easy to use, look great, and are ready to grow with your business.",
+//     pillars: [
+//       {
+//         title: "Custom or Platform-Based? You Choose",
+//         body: "Whether you want a store developed from the ground up or built on platforms like Shopify or WooCommerce, we deliver clean, scalable setups tailored to your brand.",
+//       },
+//       {
+//         title: "Smart Product Structure",
+//         body: "We organize your products with thoughtful categories, filters, and layouts to ensure users find what they need — and convert quickly.",
+//       },
+//       {
+//         title: "Ready to Grow",
+//         body: "We build mobile-friendly, high-performance stores that keep up with your growth — no matter the traffic, no matter the season.",
+//       },
+//     ],
+//   },
+//   {
+//     slug: "ui-ux-services",
+//     title: "UI / UX Services",
+//     metaTitle: "UI / UX Services - Dyas AI",
+//     metaDescription:
+//       "Delivering intuitive and engaging UI/UX design services that enhance user journeys, improve conversions, and align perfectly with your brand identity.",
+//     breadcrumb: ["Home", "Service", "UI / UX Services"],
+//     ...shared,
+//     sectionHeadline: "Design That Drives Interaction, Retention, and Growth",
+//     body: [
+//       "We don't just make things look good, we craft digital experiences that solve user problems, reduce friction, and support your business goals. Whether you're launching a new product, improving an existing interface, or scaling up your platform, our design process is built to deliver measurable results.",
+//     ],
+//     offerTitle: "What We Offer",
+//     offers: [
+//       {
+//         title: "User Experience Research & Strategy",
+//         body: "We begin with deep discovery analyzing your users, goals, and competitors. Through user interviews, analytics, and journey mapping, we build data-backed design strategies that align with your objectives.",
+//       },
+//       {
+//         title: "Wireframes & UX Architecture",
+//         body: "Before we design the look, we structure the experience. We create wireframes and navigation flows that outline every interaction, ensuring your app or site feels intuitive from the first click.",
+//       },
+//       {
+//         title: "Interface Design (UI)",
+//         body: "Pixel-perfect visuals that reflect your brand and delight your users. We focus on hierarchy, consistency, responsiveness, and accessibility to make your product beautiful and usable.",
+//       },
+//       {
+//         title: "Interactive Prototypes",
+//         body: "Get a feel for your product before it's built. We deliver clickable, animated prototypes that simulate user flows and help you test ideas quickly and clearly — ideal for investors, developers, and stakeholders.",
+//       },
+//       {
+//         title: "Design Systems & Component Libraries",
+//         body: "We build scalable, reusable design systems that your dev team can easily implement. This ensures consistency and speeds up future builds, updates, and collaborations.",
+//       },
+//       {
+//         title: "Usability Testing & Iteration",
+//         body: "We test everything — with real users or stakeholders — and refine designs based on feedback. No assumptions, just insights.",
+//       },
+//       {
+//         title: "UI/UX Audits & Redesigns",
+//         body: "Already have a product? We assess its design from a usability, conversion, and accessibility standpoint — then create a roadmap for improvement.",
+//       },
+//     ],
+//     faqSub: "Design Shouldn't Be Confusing. Let's Make It Clear.",
+//     faqs: [
+//       {
+//         q: "Which tools do you use for UI/UX design?",
+//         a: "We primarily use Figma. All files are shareable and developer-ready.",
+//       },
+//       {
+//         q: "Do you deliver responsive/mobile-first designs?",
+//         a: "Always. Every design is created with mobile, tablet, and desktop users in mind. We ensure smooth usability across all screen sizes.",
+//       },
+//       {
+//         q: "Will I get a prototype before development?",
+//         a: "Yes. We provide interactive prototypes so you can test and review the user experience before any development begins. This reduces guesswork and ensures alignment early on.",
+//       },
+//       {
+//         q: "Can you redesign my existing website or app?",
+//         a: "Yes. We offer UI/UX audits and redesigns for existing platforms. We'll identify usability issues, modernize your design, and optimize the user experience to improve conversions and engagement.",
+//       },
+//     ],
+//     bannerHeadline: "Smart Design & Seamless Interfaces — Built to Convert.",
+//     bannerSub: "From user flows to final clicks — we design digital experiences that work.",
+//     pillars: [
+//       {
+//         title: "Research-Driven Strategy",
+//         body: "We start with understanding your users and your goals — mapping out clear user journeys to inform a design strategy that drives real results.",
+//       },
+//       {
+//         title: "Modern, Scalable Design Systems",
+//         body: "From wireframes to high-fidelity visuals, we create consistent design systems tailored for web or mobile, adaptable across platforms.",
+//       },
+//       {
+//         title: "Usability Meets Aesthetics",
+//         body: "Good design isn't just about looking nice — we combine clean visuals with smart interactions to improve functionality and retain users.",
+//       },
+//     ],
+//   },
+
 ];
 
 export function getServicePage(slug: string) {

@@ -86,7 +86,7 @@ export function Work() {
       id="work"
       style={{ "--case-count": work.cases.length } as CSSProperties}
     >
-      <h2 className="dyas-visually-hidden">{work.heading}</h2>
+      <h2 className="dyas-work__heading dyas-reveal">{work.heading}</h2>
       <div ref={trackRef} className="dyas-work__track">
         <div className="dyas-work__pin">
           {work.cases.map((item, index) => (
