@@ -1362,7 +1362,7 @@ body::before {
 
 .dyas-logos {
   margin-top: 60px;
-  padding-bottom: clamp(72px, 10vw, 160px);
+  padding-bottom: 70px;
   width: min(var(--pgp-container), calc(100% - var(--gutter)));
   margin-inline: auto;
   overflow: hidden;
@@ -1982,7 +1982,7 @@ body::before {
 .dyas-work__heading {
   width: min(var(--pgp-container), calc(100% - var(--gutter)));
   margin: 0 auto clamp(20px, 3vw, 32px);
-  padding-top: clamp(40px, 6vw, 72px);
+  padding-top: clamp(20px, 6vw, 72px);
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: 12px;
@@ -2022,6 +2022,7 @@ body::before {
 
 .dyas-case:first-child {
   opacity: 1;
+  padding-top: 25px;
   pointer-events: auto;
 }
 

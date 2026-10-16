@@ -117,7 +117,7 @@ export const logos: {
     { src: "/logos/coinkit-2.png", alt: "CoinKit", scale: 4.4, native: true },
     { src: "/logos/europcar.png", alt: "Europcar", scale: 2.2, native: true },
     { src: "/logos/maverick-3.png", alt: "Maverick Concierge", scale: 2.8, native: true },
-    { src: "/logos/think-b-logo.png", alt: "think b", scale: 2, native: true },
+    { src: "/logos/think-b-logo.png", alt: "think b", scale: 1.5, native: true },
   ],
 };
 
