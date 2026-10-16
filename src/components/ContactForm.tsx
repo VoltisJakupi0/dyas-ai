@@ -72,7 +72,7 @@ export function ContactForm({ cta }: { cta: string }) {
       </div>
       <div>
         <label htmlFor="contact-company" className="text-mono-s uppercase opacity-60">
-          Company
+          Company <span className="normal-case">(optional)</span>
         </label>
         <input
           id="contact-company"
