@@ -76,7 +76,6 @@ function ScrollPlatform() {
   const sync = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
-    if (window.matchMedia("(max-width: 1023px)").matches) return;
     const p = scrollProgress(el);
     setProgress(p);
     setActive(Math.min(COUNT - 1, Math.floor(p * COUNT)));
@@ -84,21 +83,18 @@ function ScrollPlatform() {
 
   useEffect(() => {
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const mobile = window.matchMedia("(max-width: 1023px)");
     let stop = () => {};
     const configure = () => {
       stop();
       setReduce(motion.matches);
-      if (!mobile.matches && !motion.matches) stop = onScrollPaint(sync);
+      if (!motion.matches) stop = onScrollPaint(sync);
     };
     const frame = requestAnimationFrame(configure);
     motion.addEventListener("change", configure);
-    mobile.addEventListener("change", configure);
     return () => {
       cancelAnimationFrame(frame);
       stop();
       motion.removeEventListener("change", configure);
-      mobile.removeEventListener("change", configure);
     };
   }, [sync]);
 
@@ -150,13 +146,13 @@ function ScrollPlatform() {
   return (
     <div
       ref={trackRef}
-      className={reduce ? "h-auto" : "h-auto lg:h-[480vh]"}
+      className={reduce ? "h-auto" : "h-[260vh] lg:h-[480vh]"}
     >
       <div
         className={
           reduce
             ? "relative"
-            : "relative lg:sticky lg:top-0 lg:h-[100dvh] overflow-clip"
+            : "sticky top-0 h-[100svh] lg:h-[100dvh] overflow-clip"
         }
       >
         <div className="relative hidden h-full w-full grid-cols-[1fr_47.17%_1fr] lg:grid">

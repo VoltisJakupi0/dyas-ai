@@ -2076,13 +2076,13 @@ body::before {
     visibility: visible !important;
   }
   .dyas-case {
-    position: relative !important;
+    position: sticky !important;
     inset: auto !important;
-    top: auto !important;
+    top: 0 !important;
     width: 100% !important;
     height: auto !important;
-    min-height: 0 !important;
-    margin-bottom: 40px;
+    min-height: 112svh !important;
+    margin-bottom: 0;
     opacity: 1 !important;
     filter: none !important;
     pointer-events: auto !important;
@@ -5624,31 +5624,16 @@ body::before {
   .dyas-hero-stage,
   .dyas-hero-area__showreel {
     width: 100%;
-    min-height: 0;
+    min-height: 240vh;
     height: auto;
     margin-top: 0;
   }
 
-  .dyas-term__line {
-    display: none;
-  }
-
-  .dyas-term__line:nth-last-of-type(2) {
-    display: flex;
-    opacity: 1;
-    transform: none;
-    filter: none;
-  }
-
-  .dyas-term__hint {
-    display: none;
-  }
-
-  /* A compact showreel stays in normal document flow on touch layouts. */
+  /* Keep the showreel animation while shortening its mobile scroll track. */
   .dyas-hero-pin {
-    position: relative;
-    top: auto;
-    height: clamp(280px, 60svh, 520px);
+    position: sticky;
+    top: 0;
+    height: 100svh;
     overflow: clip;
     align-items: stretch;
     justify-content: stretch;
@@ -5732,7 +5717,7 @@ body::before {
 
   .dyas-hero-stage,
   .dyas-hero-area__showreel {
-    min-height: 0;
+    min-height: 240vh;
     height: auto;
   }
 
@@ -6223,7 +6208,6 @@ body::before {
     transform: scaleX(1);
   }
 }
-
 
 
 

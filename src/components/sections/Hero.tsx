@@ -132,7 +132,7 @@ export function Hero() {
     let stop = () => {};
     const configure = () => {
       stop();
-      if (reduceMq.matches || noZoomMq.matches) {
+      if (reduceMq.matches) {
         apply(1);
         if (frameRef.current) frameRef.current.style.transform = "none";
         if (winRef.current) winRef.current.style.transform = "none";
