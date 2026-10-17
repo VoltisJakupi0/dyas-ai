@@ -82,7 +82,7 @@ export const nav = {
   links: [
     { label: "Services", href: "/services", menu: "services" as const },
     { label: "Products", href: "/products" },
-    { label: "Pricing", href: "/pricing-plans" },
+    { label: "Pricing", href: "/pricing" },
     { label: "About Us", href: "/about-us" },
     { label: "Contact Us", href: "/contact-us" },
   ],
@@ -496,7 +496,7 @@ export const footer = {
       links: [
         { label: "Services", href: "/services" },
         { label: "Products", href: "/products" },
-        { label: "Pricing", href: "/pricing-plans" },
+        { label: "Pricing", href: "/pricing" },
         { label: "About Us", href: "/about-us" },
         { label: "Contact Us", href: "/contact-us" },
       ],
@@ -562,7 +562,7 @@ export const pages = {
         name: "Project + Maintenance",
         body: "Launch your AI solution with peace of mind—ongoing monitoring, updates, and improvements included.",
         items: [
-          "Everything in Project Build",
+          "Everything in Project-Based",
           "Monthly monitoring & optimizations",
           "Light updates, performance checks, and bug fixes",
           "Priority access to our support team",
@@ -671,7 +671,7 @@ export const routes = [
   "/services",
   ...services.map((s) => s.href),
   "/products",
-  "/pricing-plans",
+  "/pricing",
   "/privacy-policy",
   "/about-us",
   "/contact-us",

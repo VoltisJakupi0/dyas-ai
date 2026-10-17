@@ -8,7 +8,7 @@ function RevealText({ text }: { text: string }) {
   const parts = text.split(/(\s+)/);
 
   return (
-    <p>
+    <p aria-hidden="true">
       {parts.map((part, i) => {
         if (/^\s+$/.test(part)) {
           return (
@@ -208,11 +208,7 @@ export function Orbit() {
             <Artifact {...first} stack="down" />
 
             <div className="dyas-orbit__copy">
-              <div className="sr-only">
-                <p>{orbit.headline}</p>
-                <p>{orbit.body}</p>
-              </div>
-              <div aria-hidden="true">
+              <div role="group" aria-label={`${orbit.headline} ${orbit.body}`}>
                 <RevealText text={orbit.headline} />
                 <RevealText text={orbit.body} />
               </div>

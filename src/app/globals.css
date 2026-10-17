@@ -1264,6 +1264,10 @@ body::before {
 }
 
 @media (max-width: 1024px) {
+  html {
+    scroll-behavior: smooth;
+  }
+
   :root {
     --header-height: 3.75rem;
   }
@@ -2081,7 +2085,7 @@ body::before {
     top: 0 !important;
     width: 100% !important;
     height: auto !important;
-    min-height: 112svh !important;
+    min-height: 122svh !important;
     margin-bottom: 0;
     opacity: 1 !important;
     filter: none !important;
@@ -5624,7 +5628,7 @@ body::before {
   .dyas-hero-stage,
   .dyas-hero-area__showreel {
     width: 100%;
-    min-height: 240vh;
+    min-height: 280vh;
     height: auto;
     margin-top: 0;
   }
@@ -5660,6 +5664,16 @@ body::before {
     height: 68%;
     transform: none;
     will-change: auto;
+  }
+
+  .dyas-iso__face,
+  .dyas-iso__side {
+    transition-duration: 440ms;
+  }
+
+  .dyas-iso__panel {
+    transition-duration: 400ms;
+    transition-timing-function: ease-in-out;
   }
 
   .container-site {
@@ -5717,7 +5731,7 @@ body::before {
 
   .dyas-hero-stage,
   .dyas-hero-area__showreel {
-    min-height: 240vh;
+    min-height: 280vh;
     height: auto;
   }
 
@@ -6208,6 +6222,5 @@ body::before {
     transform: scaleX(1);
   }
 }
-
 
 

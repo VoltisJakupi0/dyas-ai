@@ -146,7 +146,7 @@ function ScrollPlatform() {
   return (
     <div
       ref={trackRef}
-      className={reduce ? "h-auto" : "h-[260vh] lg:h-[480vh]"}
+      className={reduce ? "h-auto" : "h-[300vh] lg:h-[480vh]"}
     >
       <div
         className={

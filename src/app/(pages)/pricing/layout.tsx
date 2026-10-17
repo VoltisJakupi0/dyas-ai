@@ -5,7 +5,7 @@ import { pageSeo, serializeJsonLd } from "@/lib/seo";
 export const metadata: Metadata = pageSeo({
   title: pages.pricing.title,
   description: pages.pricing.description,
-  path: "/pricing-plans",
+  path: "/pricing",
 });
 
 const faqJsonLd = {
