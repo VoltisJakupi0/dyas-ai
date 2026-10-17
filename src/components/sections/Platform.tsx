@@ -76,23 +76,37 @@ function ScrollPlatform() {
   const sync = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
+    if (window.matchMedia("(max-width: 1023px)").matches) return;
     const p = scrollProgress(el);
     setProgress(p);
     setActive(Math.min(COUNT - 1, Math.floor(p * COUNT)));
   }, []);
 
   useEffect(() => {
-    const reduced = prefersReducedMotion();
-    setReduce(reduced);
-    if (reduced) {
-      setProgress(1);
-      setActive(COUNT - 1);
-      return;
-    }
-    return onScrollPaint(sync);
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mobile = window.matchMedia("(max-width: 1023px)");
+    let stop = () => {};
+    const configure = () => {
+      stop();
+      setReduce(motion.matches);
+      if (!mobile.matches && !motion.matches) stop = onScrollPaint(sync);
+    };
+    const frame = requestAnimationFrame(configure);
+    motion.addEventListener("change", configure);
+    mobile.addEventListener("change", configure);
+    return () => {
+      cancelAnimationFrame(frame);
+      stop();
+      motion.removeEventListener("change", configure);
+      mobile.removeEventListener("change", configure);
+    };
   }, [sync]);
 
   const goTo = useCallback((index: number) => {
+    if (prefersReducedMotion() || window.matchMedia("(max-width: 1023px)").matches) {
+      setActive(index);
+      return;
+    }
     const el = trackRef.current;
     if (!el) return;
     const range = el.offsetHeight - (window.visualViewport?.height ?? window.innerHeight);
@@ -136,13 +150,13 @@ function ScrollPlatform() {
   return (
     <div
       ref={trackRef}
-      className={reduce ? "h-auto" : "h-[360vh] lg:h-[480vh]"}
+      className={reduce ? "h-auto" : "h-auto lg:h-[480vh]"}
     >
       <div
         className={
           reduce
             ? "relative"
-            : "sticky top-0 h-[100dvh] overflow-clip"
+            : "relative lg:sticky lg:top-0 lg:h-[100dvh] overflow-clip"
         }
       >
         <div className="relative hidden h-full w-full grid-cols-[1fr_47.17%_1fr] lg:grid">
@@ -168,7 +182,7 @@ function ScrollPlatform() {
           <div className="bg-stroke-1 pointer-events-none absolute right-0 bottom-0 h-4 w-px" />
         </div>
 
-        <div className="flex h-full min-h-0 flex-col gap-4 px-1 pt-[calc(var(--header-height)+4px)] pb-[max(12px,env(safe-area-inset-bottom))] lg:hidden">
+        <div className="flex h-full min-h-0 flex-col gap-4 px-1 pt-4 pb-4 lg:hidden">
           <div className="mx-auto flex w-full max-w-md shrink-0 flex-col items-center text-center">
             <p className="text-heading-28 text-balance">{slide.title}</p>
             <p className="text-body-18-light mt-3 max-w-80 text-pretty opacity-80">{slide.body}</p>
@@ -177,7 +191,7 @@ function ScrollPlatform() {
             </a>
           </div>
 
-          <div className="relative min-h-0 flex-1">
+          <div className="relative h-[min(110vw,480px)] shrink-0">
             <CornerFrame tick="text-stroke-2" className="h-full min-h-0">
               <div className="flex min-h-0 flex-1 items-center justify-center overflow-clip p-4">
                 <div className="relative aspect-[634/760] h-full max-h-full w-full max-w-[22rem]">
@@ -187,15 +201,16 @@ function ScrollPlatform() {
             </CornerFrame>
           </div>
 
-          <div className="flex shrink-0 justify-center gap-1.5" aria-hidden="true">
+          <div className="flex shrink-0 justify-center gap-1.5" aria-label="Choose a service">
             {SLIDES.map((item, i) => (
               <button
                 key={item.title}
                 type="button"
                 aria-label={item.title}
+                aria-pressed={i === active}
                 onClick={() => goTo(i)}
                 className={cn(
-                  "h-1.5 rounded-full transition-[width,background-color] duration-300",
+                  "h-11 min-w-11 rounded-full border border-stroke-1 transition-colors duration-300",
                   i === active ? "bg-sun w-5" : "bg-stroke-1 w-1.5",
                 )}
               />

@@ -13,7 +13,7 @@ export function RaftMedia({ priority = false }: { priority?: boolean }) {
       <div className="dyas-raft-media__hero">
         <Image
           src={HERO}
-          alt=""
+          alt="Raft AI camera view scanning retail shelves"
           width={1200}
           height={900}
           className="dyas-raft-media__hero-img"
@@ -22,9 +22,9 @@ export function RaftMedia({ priority = false }: { priority?: boolean }) {
         />
       </div>
       <div className="dyas-raft-media__strip">
-        {THUMBS.map((src) => (
+        {THUMBS.map((src, i) => (
           <div key={src} className="dyas-raft-media__thumb">
-            <Image src={src} alt="" width={480} height={360} sizes="200px" />
+            <Image src={src} alt={["Raft AI detecting an out-of-stock shelf", "Raft AI checking product facings", "Raft AI identifying products on a shelf"][i]} width={480} height={360} sizes="200px" />
           </div>
         ))}
       </div>

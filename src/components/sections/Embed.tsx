@@ -326,7 +326,7 @@ export function Embed() {
                 }}
               >
                 <div className="dyas-floor__top">
-                  <p className="dyas-floor__title">Dyas floor · Live</p>
+                  <p className="dyas-floor__title">Dyas floor · Illustrative demo</p>
                   <span className="dyas-floor__tag">Day shift</span>
                   <span className="dyas-floor__tag dyas-floor__tag--on">4 / 4 agents</span>
                   <em>{time}</em>

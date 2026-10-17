@@ -95,22 +95,6 @@ export function Footer() {
           ))}
         </nav>
 
-        <form className="dyas-closing__form" action={`mailto:${site.email}`} method="get">
-          <label htmlFor="footer-newsletter">Newsletter</label>
-          <p>{footer.newsletter}</p>
-          <div className="dyas-closing__field">
-            <input
-              id="footer-newsletter"
-              name="body"
-              type="email"
-              required
-              autoComplete="email"
-              placeholder="Email"
-            />
-            <button type="submit">Join</button>
-          </div>
-          <small>{footer.privacyNote}</small>
-        </form>
       </div>
 
       <div className="dyas-closing__bar">

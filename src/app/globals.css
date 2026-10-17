@@ -2049,8 +2049,11 @@ body::before {
   .dyas-work {
     padding-block: 0;
   }
+  .dyas-logos__label {
+    margin-bottom: 40px;
+  }
   .dyas-work__heading {
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     padding-top: clamp(32px, 8vw, 56px);
   }
   .dyas-work__track,
@@ -2073,13 +2076,13 @@ body::before {
     visibility: visible !important;
   }
   .dyas-case {
-    position: sticky !important;
+    position: relative !important;
     inset: auto !important;
-    top: 0 !important;
+    top: auto !important;
     width: 100% !important;
     height: auto !important;
-    /* Extra scroll room so each pinned case doesn't fly past on mobile. */
-    min-height: 145vh !important;
+    min-height: 0 !important;
+    margin-bottom: 40px;
     opacity: 1 !important;
     filter: none !important;
     pointer-events: auto !important;
@@ -2095,6 +2098,7 @@ body::before {
     box-shadow: none;
   }
   .dyas-case:last-child {
+    margin-bottom: 0;
     min-height: 0 !important;
     padding-bottom: 0 !important;
   }
@@ -2115,7 +2119,7 @@ body::before {
     width: 100%;
     margin-inline: 0;
     margin-bottom: 0;
-    padding: max(20px, env(safe-area-inset-top, 0px)) 20px 16px;
+    padding: 0 20px 16px;
     background: var(--ground);
     box-sizing: border-box;
   }
@@ -3163,7 +3167,7 @@ body::before {
     margin-inline: 0;
   }
   .dyas-logos__label {
-    margin-bottom: 30px;
+    margin-bottom: 40px;
   }
   .dyas-logos__track {
     --logo-h: 14px;
@@ -3248,7 +3252,7 @@ body::before {
     width: 100%;
     margin-inline: 0;
     margin-bottom: 0;
-    padding: max(20px, env(safe-area-inset-top, 0px)) 20px 16px;
+    padding: 0 20px 16px;
   }
   /* Work gallery: middle shot only, edge to edge. */
   .dyas-case .dyas-gallery {
@@ -4924,85 +4928,6 @@ body::before {
   color: var(--ink);
 }
 
-.dyas-closing__form {
-  width: min(360px, 100%);
-}
-
-.dyas-closing__form label {
-  display: block;
-  font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: 10px;
-  line-height: 20px;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.dyas-closing__form p {
-  margin-top: 14px;
-  font-size: 15px;
-  line-height: 1.5;
-  letter-spacing: -0.01em;
-  color: rgba(255, 255, 255, 0.78);
-}
-
-.dyas-closing__field {
-  display: flex;
-  gap: 8px;
-  margin-top: 16px;
-}
-
-.dyas-closing__field input {
-  flex: 1 1 auto;
-  min-width: 0;
-  height: 44px;
-  padding-inline: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.38);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--ink);
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.dyas-closing__field input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.dyas-closing__field input:focus-visible {
-  border-color: var(--ink);
-}
-
-.dyas-closing__field button {
-  height: 44px;
-  padding-inline: 22px;
-  border-radius: 999px;
-  background: var(--ink);
-  color: var(--brand);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.dyas-closing__field button:hover {
-  background: var(--accent);
-  color: var(--ink);
-}
-
-.dyas-closing__form small {
-  display: block;
-  margin-top: 12px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  line-height: 18px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
-}
-
 .dyas-closing__bar {
   display: flex;
   align-items: center;
@@ -5699,18 +5624,31 @@ body::before {
   .dyas-hero-stage,
   .dyas-hero-area__showreel {
     width: 100%;
-    min-height: 420vh;
+    min-height: 0;
     height: auto;
     margin-top: 0;
   }
 
-  /* Fill the large viewport so the terrain runs under the browser toolbar
-     instead of stopping above it and leaving a flat band. */
+  .dyas-term__line {
+    display: none;
+  }
+
+  .dyas-term__line:nth-last-of-type(2) {
+    display: flex;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .dyas-term__hint {
+    display: none;
+  }
+
+  /* A compact showreel stays in normal document flow on touch layouts. */
   .dyas-hero-pin {
-    position: sticky;
-    top: 0;
-    height: 100svh;
-    height: 100lvh;
+    position: relative;
+    top: auto;
+    height: clamp(280px, 60svh, 520px);
     overflow: clip;
     align-items: stretch;
     justify-content: stretch;
@@ -5794,7 +5732,7 @@ body::before {
 
   .dyas-hero-stage,
   .dyas-hero-area__showreel {
-    min-height: 420vh;
+    min-height: 0;
     height: auto;
   }
 
@@ -5802,11 +5740,6 @@ body::before {
     width: 90%;
     height: 72%;
     transform: none;
-  }
-
-  .dyas-closing__field input,
-  .dyas-closing__field button {
-    font-size: 16px;
   }
 
   input,

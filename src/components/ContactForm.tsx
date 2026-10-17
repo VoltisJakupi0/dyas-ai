@@ -108,6 +108,7 @@ export function ContactForm({ cta }: { cta: string }) {
           .
         </p>
       ) : null}
+      <p className="text-body-16-light">Read our <a href="/privacy-policy" className="underline underline-offset-4">Privacy Policy</a> to learn how we handle your enquiry.</p>
       <button type="submit" className="pgp-btn pgp-btn--primary" disabled={status === "sending"}>
         <span className="pgp-btn__label">
           <span>{status === "sending" ? "Sending…" : cta}</span>

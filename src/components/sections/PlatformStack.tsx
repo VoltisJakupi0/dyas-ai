@@ -213,7 +213,7 @@ function SceneChat() {
       </div>
       <div className="dyas-iso__chips">
         <span>Book it</span>
-        <span>See pricing</span>
+        <span>Request a quote</span>
       </div>
     </>
   );
@@ -234,8 +234,8 @@ function SceneSurfaces() {
           </header>
           <div>
             <div className="dyas-iso__stat">
-              <strong>99.9%</strong>
-              <span>uptime</span>
+              <strong>App</strong>
+              <span>monitoring</span>
             </div>
             <div className="dyas-iso__bars">
               <i style={{ height: "38%" }} />
@@ -340,13 +340,12 @@ const SCENES: { title: string; panel: ReactNode }[] = [
 
 const COUNT = SCENES.length;
 
-export function PlatformStack({ progress, active }: { progress: number; active: number }) {
-  const p = Math.min(1, Math.max(0, progress));
+export function PlatformStack({ active }: { progress: number; active: number }) {
   const current = Math.min(COUNT - 1, Math.max(0, active));
   const scene = SCENES[current];
 
   return (
-    <div className="dyas-iso" role="img" aria-label={scene.title}>
+    <div className="dyas-iso" role="img" aria-label={`Illustrative demo: ${scene.title}`}>
       <div className="dyas-iso__scene">
         <div className="dyas-iso__world" style={{ "--n": COUNT } as CSSProperties}>
           {SCENES.map((item, i) => (
@@ -369,7 +368,6 @@ export function PlatformStack({ progress, active }: { progress: number; active: 
           ))}
         </div>
       </div>
-      <span className="sr-only">{`Layer ${current + 1} of ${COUNT}, ${Math.round(p * 100)}%`}</span>
     </div>
   );
 }

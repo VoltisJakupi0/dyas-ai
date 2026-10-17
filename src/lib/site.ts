@@ -8,9 +8,9 @@ export function hrefProps(href: string) {
 export const site = {
   name: "Dyas AI",
   url: "https://www.dyas.ai",
-  title: "Software Development | AI Agency Services - Dyas AI",
+  title: "Dyas AI | AI Agents & Automation for Business",
   description:
-    "Discover innovative digital solutions with our AI agency, designed to improve efficiency and drive real results for your team.",
+    "We build AI agents, voice receptionists, and automations that connect to your existing tools and help your team get more done. Book a call.",
   email: "info@dyas.ai",
   address: "London, United Kingdom",
   ctaHref: "https://calendly.com/dyas-info/30min",
@@ -82,7 +82,7 @@ export const nav = {
   links: [
     { label: "Services", href: "/services", menu: "services" as const },
     { label: "Products", href: "/products" },
-    { label: "Pricing Plans", href: "/pricing-plans" },
+    { label: "Pricing", href: "/pricing-plans" },
     { label: "About Us", href: "/about-us" },
     { label: "Contact Us", href: "/contact-us" },
   ],
@@ -230,7 +230,7 @@ export const work = {
       tags: ["CRM Integration", "Scheduling"],
       stats: [
         { label: "Coverage", value: "24", unit: "/7" },
-        { label: "Missed-call rate", value: "0" },
+        { label: "Call routing", value: "Auto" },
         { label: "Core integrations", value: "3" },
       ],
       images: ["/images/work/ai2-voice-robot.jpg", "/images/work/ai-voice-02.jpg", "/images/work/ai2-voice-obj.jpg"],
@@ -242,7 +242,7 @@ export const work = {
       tags: ["Multi-Channel", "Lead Scoring"],
       stats: [
         { label: "Capture channels", value: "3" },
-        { label: "Follow-up lag", value: "0" },
+        { label: "Follow-ups", value: "Auto" },
         { label: "Pipeline coverage", value: "24", unit: "/7" },
       ],
       images: ["/images/work/ai2-sales-robot.jpg", "/images/work/ai-sales-03.jpg", "/images/work/ai2-sales-obj.jpg"],
@@ -254,8 +254,8 @@ export const work = {
       tags: ["Order Tracking", "Customer Service"],
       stats: [
         { label: "Support hours", value: "24", unit: "/7" },
-        { label: "First response", value: "<1", unit: "min" },
-        { label: "Tickets deflected", value: "60", unit: "%" },
+        { label: "Order tracking", value: "Built in" },
+        { label: "Returns", value: "Supported" },
       ],
       images: ["/images/work/ai2-commerce-robot.jpg", "/images/work/ai-commerce-03.jpg", "/images/work/ai2-commerce-obj.jpg"],
     },
@@ -265,7 +265,7 @@ export const work = {
       industry: "Scheduling",
       tags: ["Reminders", "Calendar Sync"],
       stats: [
-        { label: "Fewer no-shows", value: "40", unit: "%" },
+        { label: "Booking", value: "Auto" },
         { label: "Reminders", value: "Auto" },
         { label: "Calendar sync", value: "Live" },
       ],
@@ -309,7 +309,7 @@ export const problem = {
 };
 
 export const embed = {
-  kicker: "Creating Solutions That Are Bold And Up With All Times!",
+  kicker: "Bold solutions, built to keep up with what’s next.",
   headline: "Empowering the Future of Work with AI Innovation",
   body: "At Dyas AI, we craft digital experiences that streamline operations and elevate creative potential. By combining smart automation, data insights, and visual excellence, we enable modern teams to work faster, smarter, and more impactfully, no matter where they are in the world.",
   pillars: [
@@ -391,7 +391,7 @@ export const banner = {
 
 export const testimonials = {
   headline: "What Our Clients Say About Working With Us!",
-  wallHeadline: "Proof that automation pays for itself.",
+  wallHeadline: "What our clients say.",
   caption:
     "Real stories from our clients showcase the impact of our solutions, building trust and credibility through authentic experiences.",
   items: [
@@ -490,15 +490,13 @@ export const cta = {
 
 export const footer = {
   tagline: "Built to Automate. Designed to Scale.",
-  newsletter: "Subscribe to our newsletter and receive the latest news on products, services & more.",
-  privacyNote: "By subscribing, you accept the Privacy Policy",
   columns: [
     {
       title: "Menu",
       links: [
         { label: "Services", href: "/services" },
         { label: "Products", href: "/products" },
-        { label: "Pricing Plans", href: "/pricing-plans" },
+        { label: "Pricing", href: "/pricing-plans" },
         { label: "About Us", href: "/about-us" },
         { label: "Contact Us", href: "/contact-us" },
       ],
@@ -508,6 +506,7 @@ export const footer = {
       links: [
         { label: "Careers", href: "/career" },
         { label: "Blogs", href: "/blog" },
+        { label: "Privacy Policy", href: "/privacy-policy" },
       ],
     },
     {
@@ -538,12 +537,11 @@ export const pages = {
     breadcrumb: ["Home", "Services"],
   },
   pricing: {
-    title: "AI Pricing Plans | Flexible & Transparent Options - Dyas AI",
+    title: "Pricing | Custom AI Projects - Dyas AI",
     description:
-      "Discover flexible AI service pricing plans tailored to your business size and goals. Transparent, scalable options.",
-    heading: "Pricing Plans",
-    breadcrumb: ["Home", "Pricing Plans"],
-    save: "Save 30%",
+      "Every project is scoped to your workflow. Choose a pricing option and book a call for a custom quote covering delivery, integrations, and ongoing support.",
+    heading: "Pricing",
+    breadcrumb: ["Home", "Pricing"],
     note: "Click the button and contact us — we'll guide you through the best plan for your needs.",
     faqKicker: "We're here to answer all your questions",
     faqSub: "Helpful Info Before You Choose a Plan",
@@ -592,7 +590,7 @@ export const pages = {
       },
       {
         q: "Do you offer one-time services without ongoing maintenance?",
-        a: "Yes. Our Basic Plan is designed for one-time delivery with no monthly commitments.",
+        a: "Yes. Our Project-Based option is designed for one-time delivery with no monthly commitments.",
       },
       {
         q: "Can I schedule a call before choosing a plan?",
@@ -674,6 +672,7 @@ export const routes = [
   ...services.map((s) => s.href),
   "/products",
   "/pricing-plans",
+  "/privacy-policy",
   "/about-us",
   "/contact-us",
   "/career",

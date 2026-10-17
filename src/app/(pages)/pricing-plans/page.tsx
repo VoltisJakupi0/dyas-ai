@@ -17,7 +17,7 @@ export default function PricingPage() {
 
       <section className="dyas-sheet__section dyas-sheet__section--flush">
         <div className="container-site">
-          <Kicker>Pick a shape, not a SKU</Kicker>
+          <Kicker>Custom quotes for your workflow</Kicker>
 
           <div className="dyas-sheet__grid dyas-sheet__grid--plans mt-10">
             {copy.plans.map((plan, i) => {
@@ -30,6 +30,7 @@ export default function PricingPage() {
                     tone={tone === "night" || tone === "brand" ? "ground" : "night"}
                   />
                   <h2 className="dyas-sheet-card__title">{plan.name}</h2>
+                  <p className="text-body-16-light mt-3">Custom quote after scoping</p>
                   <p className="dyas-sheet-card__body">{plan.body}</p>
                   <ul className="mt-8 flex-1 space-y-3">
                     {plan.items.map((item) => (

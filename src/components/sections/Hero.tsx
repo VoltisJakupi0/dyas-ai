@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Logos } from "@/components/sections/Logos";
 import { hero, site } from "@/lib/site";
-import { observeInView, onScrollPaint, prefersReducedMotion, scrollProgress } from "@/lib/scroll";
+import { observeInView, onScrollPaint, scrollProgress } from "@/lib/scroll";
 
 type Beat = {
   text: string;
@@ -19,7 +19,7 @@ const BEATS: Beat[] = [
   { text: "Dyas AI", size: "clamp(32px, 5vw, 60px)" },
   { text: "AI-powered solutions", size: "clamp(22px, 3.2vw, 36px)" },
   { text: "results_", size: "clamp(48px, 8vw, 96px)", mono: true },
-  { text: "and teams who want the last mile done.", size: "clamp(18px, 2.6vw, 30px)" },
+  { text: "Built for founders, operators, and teams ready to automate.", size: "clamp(18px, 2.6vw, 30px)" },
   { text: "We automate the last mile.", size: "clamp(22px, 3.2vw, 36px)" },
 ];
 
@@ -78,7 +78,7 @@ export function Hero() {
     const stage = stageRef.current;
     if (!stage) return;
 
-    const reduce = prefersReducedMotion();
+    const reduceMq = window.matchMedia("(prefers-reduced-motion: reduce)");
     const blur = window.matchMedia("(pointer: coarse)").matches ? 0 : 12;
     const noZoomMq = window.matchMedia("(max-width: 1024px)");
 
@@ -129,23 +129,25 @@ export function Hero() {
       });
     };
 
-    if (reduce) {
-      apply(1);
-      if (winRef.current) winRef.current.style.transform = "none";
-      if (frameRef.current) {
-        frameRef.current.style.transform = "none";
-        frameRef.current.style.borderRadius = "0px";
-        frameRef.current.style.clipPath = "none";
+    let stop = () => {};
+    const configure = () => {
+      stop();
+      if (reduceMq.matches || noZoomMq.matches) {
+        apply(1);
+        if (frameRef.current) frameRef.current.style.transform = "none";
+        if (winRef.current) winRef.current.style.transform = "none";
+        return;
       }
-      if (introRef.current) {
-        introRef.current.style.opacity = "1";
-        introRef.current.style.transform = "none";
-        introRef.current.style.pointerEvents = "auto";
-      }
-      return;
-    }
-
-    return onScrollPaint(() => apply(scrollProgress(stage)));
+      stop = onScrollPaint(() => apply(scrollProgress(stage)));
+    };
+    configure();
+    noZoomMq.addEventListener("change", configure);
+    reduceMq.addEventListener("change", configure);
+    return () => {
+      stop();
+      noZoomMq.removeEventListener("change", configure);
+      reduceMq.removeEventListener("change", configure);
+    };
   }, []);
 
   return (

@@ -78,7 +78,7 @@ export function Products() {
                 <div className="dyas-products__media">
                   <Image
                     src={item.image}
-                    alt=""
+                    alt={item.id === "folet" ? "Villa featured on Folet’s nature stays marketplace" : "Raft AI shelf monitoring preview"}
                     width={960}
                     height={1200}
                     className="dyas-products__img"

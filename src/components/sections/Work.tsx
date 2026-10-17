@@ -70,12 +70,18 @@ export function Work() {
       });
     };
 
-    const stop = onScrollPaint(tick);
-    mobileMq.addEventListener("change", tick);
+    let stop = () => {};
+    const configure = () => {
+      stop();
+      if (reduced || mobileMq.matches) reset();
+      else stop = onScrollPaint(tick);
+    };
+    configure();
+    mobileMq.addEventListener("change", configure);
 
     return () => {
       stop();
-      mobileMq.removeEventListener("change", tick);
+      mobileMq.removeEventListener("change", configure);
       reset();
     };
   }, []);

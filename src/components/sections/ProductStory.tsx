@@ -77,7 +77,7 @@ export function ProductStory({ item, index = 0 }: { item: Item; index?: number }
             <div className="dyas-product-story__hero">
               <Image
                 src={item.image}
-                alt=""
+                alt={item.id === "folet" ? "Villa featured on Folet’s nature stays marketplace" : "Raft AI shelf monitoring preview"}
                 width={item.id === "folet" ? 910 : 1200}
                 height={item.id === "folet" ? 1024 : 1500}
                 quality={100}
