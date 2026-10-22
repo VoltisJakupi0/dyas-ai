@@ -173,7 +173,7 @@ export const products = {
         "Product built and operated by Dyas",
       ],
       cta: "Visit Folet",
-      ctaHref: "https://folet.app",
+      ctaHref: "https://folet.app?lang=en",
       exploreHref: "/products#folet",
       tone: "light" as const,
     },
