@@ -3364,14 +3364,6 @@ body::before {
 }
 
 
-/* Services stack while scrolling back up: slides switch with no transition. */
-.dyas-scroll-up,
-.dyas-scroll-up *,
-.dyas-scroll-up *::before,
-.dyas-scroll-up *::after {
-  transition: none !important;
-}
-
 /* Isometric command-center stack: layers build bottom-up as the section scrolls. */
 .dyas-iso {
   --ink: #111111;

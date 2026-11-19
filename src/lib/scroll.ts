@@ -18,6 +18,48 @@ export function scrollProgress(el: HTMLElement, pinned?: HTMLElement | null) {
   return clamp01(-el.getBoundingClientRect().top / range);
 }
 
+/**
+ * One-way progress for a scroll-linked sequence. It holds the furthest value
+ * reached, so scrolling back up never plays the sequence in reverse (a reload
+ * replays it). If the user turns back while it sits between two resting
+ * frames, it eases forward to the next one (`rest`) rather than freezing
+ * mid-transition.
+ */
+export function forwardOnly(paint: (value: number) => void, rest: (value: number) => number = (v) => v) {
+  let reached = 0;
+  let raf = 0;
+
+  const settle = (target: number) => {
+    const from = reached;
+    const t0 = performance.now();
+    const run = (now: number) => {
+      const t = Math.min(1, (now - t0) / 380);
+      reached = Math.max(reached, from + (target - from) * (1 - (1 - t) ** 3));
+      paint(reached);
+      raf = t < 1 ? requestAnimationFrame(run) : 0;
+    };
+    raf = requestAnimationFrame(run);
+  };
+
+  return {
+    update(raw: number) {
+      if (raw >= reached) {
+        if (raf) cancelAnimationFrame(raf);
+        raf = 0;
+        reached = raw;
+      } else if (!raf && raw < reached - 0.002) {
+        const target = rest(reached);
+        if (target > reached + 0.0005) settle(target);
+      }
+      paint(reached);
+    },
+    stop() {
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+    },
+  };
+}
+
 export function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }

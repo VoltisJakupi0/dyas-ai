@@ -80,19 +80,17 @@ function ScrollPlatform() {
     const el = trackRef.current;
     if (!el) return;
     const slot = scrollProgress(el, el.firstElementChild as HTMLElement | null) * COUNT;
-    // Scrolling back up switches slides instantly (see .dyas-scroll-up in CSS):
-    // the build-up only plays on the way down.
-    if (Math.abs(slot - lastSlotRef.current) > 0.0005) {
-      el.classList.toggle("dyas-scroll-up", slot < lastSlotRef.current);
-      lastSlotRef.current = slot;
-    }
-    // Only re-render when the slide changes, and only once the scroll is
-    // clearly inside the next slot, so a touch resting on a boundary (or iOS
-    // rubber-banding) cannot flip the slide back and forth.
+    // The stack only builds forward: scrolling moves to a later slide once the
+    // scroll is clearly inside its slot, and never back to an earlier one, so
+    // scrolling up does not un-build it (reload to replay). Earlier slides stay
+    // reachable through the labels and dots.
+    const down = slot > lastSlotRef.current;
+    lastSlotRef.current = slot;
+    if (!down) return;
     const current = activeRef.current;
-    if (slot >= current - EDGE && slot < current + 1 + EDGE) return;
-    const next = Math.max(0, Math.min(COUNT - 1, Math.floor(slot)));
-    if (next === current) return;
+    if (slot < current + 1 + EDGE) return;
+    const next = Math.min(COUNT - 1, Math.floor(slot));
+    if (next <= current) return;
     activeRef.current = next;
     setActive(next);
   }, []);
@@ -122,6 +120,8 @@ function ScrollPlatform() {
     }
     const el = trackRef.current;
     if (!el) return;
+    activeRef.current = index;
+    setActive(index);
     const pinned = el.firstElementChild as HTMLElement | null;
     const range = el.offsetHeight - (pinned?.offsetHeight || window.innerHeight);
     const start = el.getBoundingClientRect().top + window.scrollY;

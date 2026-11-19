@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Logos } from "@/components/sections/Logos";
 import { hero, site } from "@/lib/site";
-import { observeInView, onScrollPaint, scrollProgress } from "@/lib/scroll";
+import { forwardOnly, observeInView, onScrollPaint, scrollProgress } from "@/lib/scroll";
 
 type Beat = {
   text: string;
@@ -145,28 +145,46 @@ export function Hero() {
       });
     };
 
+    // Nearest point at or after `p` where exactly one line is fully in focus.
+    const rest = (p: number) => {
+      const noZoom = noZoomMq.matches;
+      const n = BEATS.length;
+      const beatStart = noZoom ? BEAT_START_COMPACT : BEAT_START;
+      const span = ((noZoom ? BEAT_END_COMPACT : BEAT_END) - beatStart) / n;
+      if (p <= beatStart) return p;
+      for (let i = 0; i < n; i++) {
+        const last = i === n - 1;
+        const start = beatStart + i * span;
+        const end = last ? Math.max(start + span * (noZoom ? 1 : 1.25), 0.85) : start + span * (noZoom ? 1 : 1.25);
+        const mid = (start + end) / 2;
+        const inEnd = lerp(start, mid, 0.55);
+        if (p < inEnd) return noZoom && i === 0 ? p : inEnd;
+        if (last || p <= lerp(mid, end, 0.45)) return p;
+      }
+      return p;
+    };
+
     // The showreel only plays forward: it holds the furthest point reached, so
     // scrolling back up shows its settled frame instead of running in reverse.
-    let reached = 0;
+    const latch = forwardOnly(apply, rest);
     let stop = () => {};
     const configure = () => {
       stop();
+      latch.stop();
       if (reduceMq.matches) {
         apply(1);
         if (frameRef.current) frameRef.current.style.transform = "none";
         if (winRef.current) winRef.current.style.transform = "none";
         return;
       }
-      stop = onScrollPaint(() => {
-        reached = Math.max(reached, scrollProgress(stage, pinRef.current));
-        apply(reached);
-      });
+      stop = onScrollPaint(() => latch.update(scrollProgress(stage, pinRef.current)));
     };
     configure();
     noZoomMq.addEventListener("change", configure);
     reduceMq.addEventListener("change", configure);
     return () => {
       stop();
+      latch.stop();
       noZoomMq.removeEventListener("change", configure);
       reduceMq.removeEventListener("change", configure);
     };

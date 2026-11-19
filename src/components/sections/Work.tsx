@@ -4,7 +4,7 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import Image from "next/image";
 import { Gallery } from "@/components/Gallery";
 import { work } from "@/lib/site";
-import { clamp01, onScrollPaint, prefersReducedMotion, scrollProgress } from "@/lib/scroll";
+import { clamp01, forwardOnly, onScrollPaint, prefersReducedMotion, scrollProgress } from "@/lib/scroll";
 
 export function Work() {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -32,38 +32,10 @@ export function Work() {
     };
 
     const n = work.cases.length;
-    let lastSlot = 0;
-    let goingUp = false;
+    const fade = 0.22;
 
-    const tick = () => {
-      if (reduced || mobileMq.matches) {
-        reset();
-        return;
-      }
-      const p = scrollProgress(track);
+    const paint = (p: number) => {
       const slot = p * n;
-      const fade = 0.22;
-      if (Math.abs(slot - lastSlot) > 0.0005) {
-        goingUp = slot < lastSlot;
-        lastSlot = slot;
-      }
-
-      // Scrolling back up: the case for the current position is simply shown,
-      // with none of the transitions that play on the way down.
-      if (goingUp) {
-        const current = Math.max(0, Math.min(n - 1, Math.floor(slot)));
-        caseRefs.current.forEach((node, i) => {
-          if (!node) return;
-          node.style.opacity = i === current ? "1" : "0";
-          node.style.pointerEvents = i === current ? "auto" : "none";
-          node.style.filter = "";
-          const inner = node.querySelector<HTMLElement>(".dyas-case__inner");
-          if (inner) inner.style.translate = "0 0px";
-          const shots = node.querySelector<HTMLElement>(".dyas-gallery__row");
-          if (shots) shots.style.scale = "1";
-        });
-        return;
-      }
 
       caseRefs.current.forEach((node, i) => {
         if (!node) return;
@@ -93,9 +65,27 @@ export function Work() {
       });
     };
 
+    // The case sequence only plays forward: it holds the furthest point
+    // reached, so scrolling back up never runs it in reverse (reload to
+    // replay). Turning back mid-crossfade finishes the crossfade.
+    const latch = forwardOnly(paint, (p) => {
+      const slot = p * n;
+      const i = Math.floor(slot);
+      return i < n - 1 && slot - i > 1 - fade ? (i + 1) / n : p;
+    });
+
+    const tick = () => {
+      if (reduced || mobileMq.matches) {
+        reset();
+        return;
+      }
+      latch.update(scrollProgress(track));
+    };
+
     let stop = () => {};
     const configure = () => {
       stop();
+      latch.stop();
       if (reduced || mobileMq.matches) reset();
       else stop = onScrollPaint(tick);
     };
@@ -104,6 +94,7 @@ export function Work() {
 
     return () => {
       stop();
+      latch.stop();
       mobileMq.removeEventListener("change", configure);
       reset();
     };
