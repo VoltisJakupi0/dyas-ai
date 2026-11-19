@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Logos } from "@/components/sections/Logos";
 import { hero, site } from "@/lib/site";
-import { forwardOnly, observeInView, onScrollPaint, scrollProgress } from "@/lib/scroll";
+import { collapseOncePlayed, forwardOnly, observeInView, onScrollPaint, scrollProgress } from "@/lib/scroll";
 
 type Beat = {
   text: string;
@@ -167,6 +167,9 @@ export function Hero() {
     // The showreel only plays forward: it holds the furthest point reached, so
     // scrolling back up shows its settled frame instead of running in reverse.
     const latch = forwardOnly(apply, rest);
+    // ...and once it has played, its scroll track shrinks to one screen, so the
+    // way back up is not several screens of a frozen frame.
+    const played = collapseOncePlayed("hero", stage, pinRef.current);
     let stop = () => {};
     const configure = () => {
       stop();
@@ -177,7 +180,11 @@ export function Hero() {
         if (winRef.current) winRef.current.style.transform = "none";
         return;
       }
-      stop = onScrollPaint(() => latch.update(scrollProgress(stage, pinRef.current)));
+      if (played.restored) latch.set(1);
+      stop = onScrollPaint(() => {
+        latch.update(scrollProgress(stage, pinRef.current));
+        played.check();
+      });
     };
     configure();
     noZoomMq.addEventListener("change", configure);
@@ -185,6 +192,7 @@ export function Hero() {
     return () => {
       stop();
       latch.stop();
+      played.stop();
       noZoomMq.removeEventListener("change", configure);
       reduceMq.removeEventListener("change", configure);
     };

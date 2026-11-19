@@ -6,7 +6,7 @@ import { BracketFrame, CornerFrame } from "@/components/ui/Frames";
 import { PlatformStack } from "@/components/sections/PlatformStack";
 import { banner, platform, site } from "@/lib/site";
 import { cn } from "@/lib/cn";
-import { onScrollPaint, prefersReducedMotion, scrollProgress } from "@/lib/scroll";
+import { collapseOncePlayed, onScrollPaint, prefersReducedMotion, scrollProgress } from "@/lib/scroll";
 
 const SLIDES = platform.slides;
 const COUNT = SLIDES.length;
@@ -73,6 +73,7 @@ function ScrollPlatform() {
   const trackRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(0);
   const lastSlotRef = useRef(0);
+  const playedRef = useRef<ReturnType<typeof collapseOncePlayed> | null>(null);
   const [active, setActive] = useState(0);
   const [reduce, setReduce] = useState(false);
 
@@ -80,6 +81,7 @@ function ScrollPlatform() {
     const el = trackRef.current;
     if (!el) return;
     const slot = scrollProgress(el, el.firstElementChild as HTMLElement | null) * COUNT;
+    playedRef.current?.check();
     // The stack only builds forward: scrolling moves to a later slide once the
     // scroll is clearly inside its slot, and never back to an earlier one, so
     // scrolling up does not un-build it (reload to replay). Earlier slides stay
@@ -101,13 +103,26 @@ function ScrollPlatform() {
     const configure = () => {
       stop();
       setReduce(motion.matches);
-      if (!motion.matches) stop = onScrollPaint(sync);
+      if (motion.matches) return;
+      // Once all slides have played, the track shrinks to the pinned screen.
+      const el = trackRef.current;
+      if (el && !playedRef.current) {
+        const played = collapseOncePlayed("services", el, el.firstElementChild as HTMLElement | null);
+        playedRef.current = played;
+        if (played.restored) {
+          activeRef.current = COUNT - 1;
+          setActive(COUNT - 1);
+        }
+      }
+      stop = onScrollPaint(sync);
     };
     const frame = requestAnimationFrame(configure);
     motion.addEventListener("change", configure);
     return () => {
       cancelAnimationFrame(frame);
       stop();
+      playedRef.current?.stop();
+      playedRef.current = null;
       motion.removeEventListener("change", configure);
     };
   }, [sync]);

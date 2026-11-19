@@ -4,7 +4,14 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import Image from "next/image";
 import { Gallery } from "@/components/Gallery";
 import { work } from "@/lib/site";
-import { clamp01, forwardOnly, onScrollPaint, prefersReducedMotion, scrollProgress } from "@/lib/scroll";
+import {
+  clamp01,
+  collapseOncePlayed,
+  forwardOnly,
+  onScrollPaint,
+  prefersReducedMotion,
+  scrollProgress,
+} from "@/lib/scroll";
 
 export function Work() {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -80,7 +87,11 @@ export function Work() {
         return;
       }
       latch.update(scrollProgress(track));
+      played.check();
     };
+    // Once played, the track shrinks to the pinned screen (last case showing).
+    const played = collapseOncePlayed("work", track, track.firstElementChild as HTMLElement | null);
+    if (played.restored) latch.set(1);
 
     let stop = () => {};
     const configure = () => {
@@ -95,6 +106,7 @@ export function Work() {
     return () => {
       stop();
       latch.stop();
+      played.stop();
       mobileMq.removeEventListener("change", configure);
       reset();
     };

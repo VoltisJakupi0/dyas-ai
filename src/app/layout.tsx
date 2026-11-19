@@ -72,6 +72,15 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Reloading the home page starts it from the top, so its scroll sequences
+ * (which only play once, forward) replay from the start. Inline so it runs
+ * before the browser restores the old scroll position; some browsers restore
+ * it anyway, so until the first user input (or 2s after load) any such scroll
+ * is sent back to the top. Restoration is then handed back for Back / Forward.
+ */
+const RELOAD_FROM_TOP = `try{(function(){var n=performance.getEntriesByType("navigation")[0];if(!n||n.type!=="reload"||location.pathname!=="/")return;history.scrollRestoration="manual";var inputs=["wheel","touchstart","pointerdown","keydown"];function top(){if(window.scrollY>0)window.scrollTo({top:0,left:0,behavior:"instant"})}function done(){removeEventListener("scroll",top,true);inputs.forEach(function(e){removeEventListener(e,done,true)});history.scrollRestoration="auto"}addEventListener("scroll",top,true);inputs.forEach(function(e){addEventListener(e,done,true)});addEventListener("load",function(){setTimeout(done,2000)})})()}catch(e){}`;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -84,6 +93,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: serializeJsonLd(graphJsonLd) }}
         />
+        <script dangerouslySetInnerHTML={{ __html: RELOAD_FROM_TOP }} />
         <SafariChrome />
         {children}
       </body>
