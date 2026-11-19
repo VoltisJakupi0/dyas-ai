@@ -6,13 +6,15 @@ import { BracketFrame, CornerFrame } from "@/components/ui/Frames";
 import { PlatformStack } from "@/components/sections/PlatformStack";
 import { banner, platform, site } from "@/lib/site";
 import { cn } from "@/lib/cn";
-import { collapseOncePlayed, onScrollPaint, prefersReducedMotion, scrollProgress } from "@/lib/scroll";
+import { collapseOncePlayed, gateFlicks, onScrollPaint, prefersReducedMotion, scrollProgress } from "@/lib/scroll";
 
 const SLIDES = platform.slides;
 const COUNT = SLIDES.length;
 const EASE = "cubic-bezier(0.76,0,0.24,1)";
 /** Share of a slide's scroll slot the scroll must pass before the slide flips. */
 const EDGE = 0.06;
+/** Shortest time a slide stays up before the next one, however fast the scroll. */
+const STEP_MS = 420;
 
 function FeatureLabel({
   title,
@@ -72,14 +74,18 @@ function FeatureLabel({
 function ScrollPlatform() {
   const trackRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(0);
+  const targetRef = useRef(0);
+  const stepTimerRef = useRef(0);
   const lastSlotRef = useRef(0);
   const playedRef = useRef<ReturnType<typeof collapseOncePlayed> | null>(null);
+  const gateRef = useRef<ReturnType<typeof gateFlicks> | null>(null);
   const [active, setActive] = useState(0);
   const [reduce, setReduce] = useState(false);
 
   const sync = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
+    gateRef.current?.check();
     const slot = scrollProgress(el, el.firstElementChild as HTMLElement | null) * COUNT;
     playedRef.current?.check();
     // The stack only builds forward: scrolling moves to a later slide once the
@@ -89,12 +95,20 @@ function ScrollPlatform() {
     const down = slot > lastSlotRef.current;
     lastSlotRef.current = slot;
     if (!down) return;
-    const current = activeRef.current;
-    if (slot < current + 1 + EDGE) return;
-    const next = Math.min(COUNT - 1, Math.floor(slot));
-    if (next <= current) return;
-    activeRef.current = next;
-    setActive(next);
+    if (slot < targetRef.current + 1 + EDGE) return;
+    targetRef.current = Math.max(targetRef.current, Math.min(COUNT - 1, Math.floor(slot)));
+    // A fast flick still builds the stack one layer at a time.
+    const step = () => {
+      stepTimerRef.current = 0;
+      if (activeRef.current >= targetRef.current) {
+        playedRef.current?.check();
+        return;
+      }
+      activeRef.current += 1;
+      setActive(activeRef.current);
+      stepTimerRef.current = window.setTimeout(step, STEP_MS);
+    };
+    if (!stepTimerRef.current) step();
   }, []);
 
   useEffect(() => {
@@ -107,10 +121,20 @@ function ScrollPlatform() {
       // Once all slides have played, the track shrinks to the pinned screen.
       const el = trackRef.current;
       if (el && !playedRef.current) {
-        const played = collapseOncePlayed("services", el, el.firstElementChild as HTMLElement | null);
+        const pinned = el.firstElementChild as HTMLElement | null;
+        // Collapses only after the last slide has had its time on screen.
+        const played = collapseOncePlayed(
+          "services",
+          el,
+          pinned,
+          () => activeRef.current >= COUNT - 1 && !stepTimerRef.current,
+        );
         playedRef.current = played;
+        // Until then a flick is stopped at its start and at its end.
+        gateRef.current = gateFlicks(el, pinned, () => played.collapsed());
         if (played.restored) {
           activeRef.current = COUNT - 1;
+          targetRef.current = COUNT - 1;
           setActive(COUNT - 1);
         }
       }
@@ -121,22 +145,25 @@ function ScrollPlatform() {
     return () => {
       cancelAnimationFrame(frame);
       stop();
+      window.clearTimeout(stepTimerRef.current);
+      stepTimerRef.current = 0;
       playedRef.current?.stop();
       playedRef.current = null;
+      gateRef.current?.stop();
+      gateRef.current = null;
       motion.removeEventListener("change", configure);
     };
   }, [sync]);
 
   const goTo = useCallback((index: number) => {
-    if (prefersReducedMotion()) {
-      activeRef.current = index;
-      setActive(index);
-      return;
-    }
+    window.clearTimeout(stepTimerRef.current);
+    stepTimerRef.current = 0;
+    activeRef.current = index;
+    targetRef.current = index;
+    setActive(index);
+    if (prefersReducedMotion()) return;
     const el = trackRef.current;
     if (!el) return;
-    activeRef.current = index;
-    setActive(index);
     const pinned = el.firstElementChild as HTMLElement | null;
     const range = el.offsetHeight - (pinned?.offsetHeight || window.innerHeight);
     const start = el.getBoundingClientRect().top + window.scrollY;

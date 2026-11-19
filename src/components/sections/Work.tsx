@@ -75,11 +75,18 @@ export function Work() {
     // The case sequence only plays forward: it holds the furthest point
     // reached, so scrolling back up never runs it in reverse (reload to
     // replay). Turning back mid-crossfade finishes the crossfade.
-    const latch = forwardOnly(paint, (p) => {
-      const slot = p * n;
-      const i = Math.floor(slot);
-      return i < n - 1 && slot - i > 1 - fade ? (i + 1) / n : p;
-    });
+    const latch = forwardOnly(
+      (p) => {
+        paint(p);
+        if (p >= 1) played.check();
+      },
+      (p) => {
+        const slot = p * n;
+        const i = Math.floor(slot);
+        return i < n - 1 && slot - i > 1 - fade ? (i + 1) / n : p;
+      },
+      1500,
+    );
 
     const tick = () => {
       if (reduced || mobileMq.matches) {
@@ -90,7 +97,9 @@ export function Work() {
       played.check();
     };
     // Once played, the track shrinks to the pinned screen (last case showing).
-    const played = collapseOncePlayed("work", track, track.firstElementChild as HTMLElement | null);
+    const played = collapseOncePlayed("work", track, track.firstElementChild as HTMLElement | null, () =>
+      latch.done(),
+    );
     if (played.restored) latch.set(1);
 
     let stop = () => {};

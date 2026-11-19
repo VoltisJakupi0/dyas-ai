@@ -6,7 +6,14 @@ import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Logos } from "@/components/sections/Logos";
 import { hero, site } from "@/lib/site";
-import { collapseOncePlayed, forwardOnly, observeInView, onScrollPaint, scrollProgress } from "@/lib/scroll";
+import {
+  collapseOncePlayed,
+  forwardOnly,
+  gateFlicks,
+  observeInView,
+  onScrollPaint,
+  scrollProgress,
+} from "@/lib/scroll";
 
 type Beat = {
   text: string;
@@ -166,10 +173,20 @@ export function Hero() {
 
     // The showreel only plays forward: it holds the furthest point reached, so
     // scrolling back up shows its settled frame instead of running in reverse.
-    const latch = forwardOnly(apply, rest);
+    // A flick cannot rush it either: the whole reel takes at least this long.
+    const latch = forwardOnly(
+      (p) => {
+        apply(p);
+        if (p >= 1) played.check();
+      },
+      rest,
+      () => (noZoomMq.matches ? 2400 : 1200),
+    );
     // ...and once it has played, its scroll track shrinks to one screen, so the
     // way back up is not several screens of a frozen frame.
-    const played = collapseOncePlayed("hero", stage, pinRef.current);
+    const played = collapseOncePlayed("hero", stage, pinRef.current, () => latch.done());
+    // Until then a flick is stopped at its start and at its end.
+    const gate = gateFlicks(stage, pinRef.current, () => played.collapsed());
     let stop = () => {};
     const configure = () => {
       stop();
@@ -182,6 +199,7 @@ export function Hero() {
       }
       if (played.restored) latch.set(1);
       stop = onScrollPaint(() => {
+        gate.check();
         latch.update(scrollProgress(stage, pinRef.current));
         played.check();
       });
@@ -193,6 +211,7 @@ export function Hero() {
       stop();
       latch.stop();
       played.stop();
+      gate.stop();
       noZoomMq.removeEventListener("change", configure);
       reduceMq.removeEventListener("change", configure);
     };
