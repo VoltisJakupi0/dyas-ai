@@ -669,8 +669,8 @@ body::before {
   margin-top: clamp(24px, 3vw, 48px);
 }
 
-/* A flick being stopped at a pinned sequence (see gateFlicks): for a moment
-   the page cannot scroll, which ends the momentum. */
+/* The page waiting at the end of a pinned sequence that is still playing
+   (see holdUntilPlayed): it cannot scroll until the sequence is done. */
 html.dyas-hold {
   overflow-y: hidden;
 }

@@ -8,6 +8,7 @@ import {
   clamp01,
   collapseOncePlayed,
   forwardOnly,
+  holdUntilPlayed,
   onScrollPaint,
   prefersReducedMotion,
   scrollProgress,
@@ -78,14 +79,16 @@ export function Work() {
     const latch = forwardOnly(
       (p) => {
         paint(p);
-        if (p >= 1) played.check();
+        if (p < 1) return;
+        gate.release();
+        played.check();
       },
       (p) => {
         const slot = p * n;
         const i = Math.floor(slot);
         return i < n - 1 && slot - i > 1 - fade ? (i + 1) / n : p;
       },
-      1500,
+      2800,
     );
 
     const tick = () => {
@@ -93,12 +96,21 @@ export function Work() {
         reset();
         return;
       }
+      gate.check();
       latch.update(scrollProgress(track));
       played.check();
     };
     // Once played, the track shrinks to the pinned screen (last case showing).
     const played = collapseOncePlayed("work", track, track.firstElementChild as HTMLElement | null, () =>
       latch.done(),
+    );
+    // Scrolled through faster than it can play, the page waits at its end.
+    const gate = holdUntilPlayed(
+      track,
+      track.firstElementChild as HTMLElement | null,
+      // Only a sequence that has fallen behind the scroll needs the wait.
+      () => latch.done() || !latch.lagging(),
+      () => latch.set(1),
     );
     if (played.restored) latch.set(1);
 
@@ -116,6 +128,7 @@ export function Work() {
       stop();
       latch.stop();
       played.stop();
+      gate.stop();
       mobileMq.removeEventListener("change", configure);
       reset();
     };

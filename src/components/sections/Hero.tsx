@@ -9,7 +9,7 @@ import { hero, site } from "@/lib/site";
 import {
   collapseOncePlayed,
   forwardOnly,
-  gateFlicks,
+  holdUntilPlayed,
   observeInView,
   onScrollPaint,
   scrollProgress,
@@ -173,20 +173,28 @@ export function Hero() {
 
     // The showreel only plays forward: it holds the furthest point reached, so
     // scrolling back up shows its settled frame instead of running in reverse.
-    // A flick cannot rush it either: the whole reel takes at least this long.
+    // Fast scrolling cannot rush it either: the whole reel takes at least this long.
     const latch = forwardOnly(
       (p) => {
         apply(p);
-        if (p >= 1) played.check();
+        if (p < 1) return;
+        gate.release();
+        played.check();
       },
       rest,
-      () => (noZoomMq.matches ? 2400 : 1200),
+      () => (noZoomMq.matches ? 2600 : 3200),
     );
     // ...and once it has played, its scroll track shrinks to one screen, so the
     // way back up is not several screens of a frozen frame.
     const played = collapseOncePlayed("hero", stage, pinRef.current, () => latch.done());
-    // Until then a flick is stopped at its start and at its end.
-    const gate = gateFlicks(stage, pinRef.current, () => played.collapsed());
+    // Scrolled through faster than it can play, the page waits at its end.
+    const gate = holdUntilPlayed(
+      stage,
+      pinRef.current,
+      // Only a sequence that has fallen behind the scroll needs the wait.
+      () => latch.done() || !latch.lagging(),
+      () => latch.set(1),
+    );
     let stop = () => {};
     const configure = () => {
       stop();

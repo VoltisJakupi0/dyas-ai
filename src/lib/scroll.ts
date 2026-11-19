@@ -15,7 +15,9 @@ export function clamp01(n: number) {
 export function scrollProgress(el: HTMLElement, pinned?: HTMLElement | null) {
   const range = el.offsetHeight - (pinned?.offsetHeight || viewportHeight());
   if (range <= 0) return 0;
-  return clamp01(-el.getBoundingClientRect().top / range);
+  const done = -el.getBoundingClientRect().top;
+  // Scroll positions are whole pixels: within one of the end is the end.
+  return done >= range - 1 ? 1 : clamp01(done / range);
 }
 
 /**
@@ -60,6 +62,8 @@ export function forwardOnly(
     },
     /** True once the whole sequence has been painted. */
     done: () => shown >= 1,
+    /** True while what is painted trails the scroll (it was scrolled too fast). */
+    lagging: () => reached - shown > 0.02,
     update(raw: number) {
       if (raw >= reached) reached = raw;
       else if (raw < reached - 0.03) reached = Math.max(reached, rest(reached));
@@ -246,83 +250,75 @@ export function collapseOncePlayed(
 }
 
 /**
- * Touch screens: a flick cannot fly past a pinned sequence that has not played
- * yet. Whatever its speed, the momentum scroll is brought to rest where the
- * sequence starts and again where it ends, so the sequence is always seen. A
- * finger on the screen is never overridden, and neither are jumps (anchor
- * links, restored positions).
+ * A pinned sequence is never skipped by scrolling fast. If the scroll reaches
+ * the end of the pinned stretch before the sequence has finished playing, the
+ * page is held there (it cannot scroll, see .dyas-hold) while the sequence
+ * plays on at its own pace, exactly as if it had been scrolled slowly, and is
+ * released the moment it is done. Jumps (anchor links, a restored position)
+ * are not scrolls: they mark the sequence as played instead (`skip`).
  */
-export function gateFlicks(track: HTMLElement, pinned: HTMLElement | null, open: () => boolean) {
-  if (!pinned || !window.matchMedia("(pointer: coarse)").matches) return { check() {}, stop() {} };
-
-  let touching = false;
-  let liftedAt = -Infinity;
-  let lastY = window.scrollY;
-  let hold: number | null = null;
-  let heldAt = 0;
+export function holdUntilPlayed(
+  track: HTMLElement,
+  pinned: HTMLElement | null,
+  played: () => boolean,
+  skip: () => void,
+) {
   const root = document.documentElement;
+  let lastY = window.scrollY;
+  let holding = false;
+  let safety = 0;
+  let first = true;
 
-  // Stopping means two things: putting the scroll on the gate, and ending the
-  // momentum behind it. Some engines end it on the correction alone; others
-  // only when the page briefly cannot scroll (see .dyas-hold in the CSS).
   const release = () => {
-    hold = null;
+    if (!holding) return;
+    holding = false;
+    window.clearTimeout(safety);
     root.classList.remove("dyas-hold");
   };
 
-  const onTouchStart = () => {
-    touching = true;
-    release();
-  };
-  const onTouchEnd = () => {
-    touching = false;
-    liftedAt = performance.now();
-  };
-  window.addEventListener("touchstart", onTouchStart, { passive: true });
-  window.addEventListener("touchend", onTouchEnd, { passive: true });
-  window.addEventListener("touchcancel", onTouchEnd, { passive: true });
-
   return {
+    release,
     check() {
       const y = window.scrollY;
       const prev = lastY;
       lastY = y;
-      if (open()) return;
-      const now = performance.now();
-      if (hold !== null) {
-        if (Math.abs(y - hold) > 1) {
-          window.scrollTo({ top: hold, left: 0, behavior: "instant" });
-          lastY = hold;
+      if (!pinned || played()) {
+        release();
+        return;
+      }
+      const range = track.offsetHeight - pinned.offsetHeight;
+      if (range <= 1) return;
+      // Read every time: positions on the page shift when earlier sequences
+      // give their scroll length back.
+      const end = Math.ceil(track.getBoundingClientRect().top + y + range);
+      if (holding) {
+        if (Math.abs(y - end) > 1) {
+          window.scrollTo({ top: end, left: 0, behavior: "instant" });
+          lastY = end;
         }
         return;
       }
-      if (touching || now - liftedAt > 3000) return;
-      const step = y - prev;
-      if (step <= 0 || step > viewportHeight() * 0.9) return;
-      const start = track.getBoundingClientRect().top + y;
-      const end = start + track.offsetHeight - pinned.offsetHeight;
-      for (const gate of [end, start]) {
-        // One frame early (the next step would cross it): the scroll then
-        // jumps forward onto the gate instead of overshooting and coming back.
-        if (prev < gate - 1 && y + step >= gate) {
-          hold = gate;
-          heldAt = now;
-          root.classList.add("dyas-hold");
-          window.scrollTo({ top: gate, left: 0, behavior: "instant" });
-          lastY = gate;
-          window.setTimeout(() => {
-            if (hold === gate && performance.now() - heldAt >= 150) release();
-          }, 160);
-          return;
-        }
+      if (first) {
+        first = false;
+        if (y >= end) skip();
+        return;
       }
+      const step = y - prev;
+      // One frame early (the next step would cross the end), so the scroll
+      // moves forward onto it instead of overshooting and coming back.
+      if (step <= 0 || prev >= end - 1 || y + step < end) return;
+      if (step > viewportHeight() * 1.25) {
+        if (y >= end) skip();
+        return;
+      }
+      holding = true;
+      root.classList.add("dyas-hold");
+      // Safety net: never keep the page locked for long.
+      safety = window.setTimeout(release, 6000);
+      window.scrollTo({ top: end, left: 0, behavior: "instant" });
+      lastY = end;
     },
-    stop() {
-      release();
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchend", onTouchEnd);
-      window.removeEventListener("touchcancel", onTouchEnd);
-    },
+    stop: release,
   };
 }
 

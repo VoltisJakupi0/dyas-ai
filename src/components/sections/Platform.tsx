@@ -6,7 +6,7 @@ import { BracketFrame, CornerFrame } from "@/components/ui/Frames";
 import { PlatformStack } from "@/components/sections/PlatformStack";
 import { banner, platform, site } from "@/lib/site";
 import { cn } from "@/lib/cn";
-import { collapseOncePlayed, gateFlicks, onScrollPaint, prefersReducedMotion, scrollProgress } from "@/lib/scroll";
+import { collapseOncePlayed, holdUntilPlayed, onScrollPaint, prefersReducedMotion, scrollProgress } from "@/lib/scroll";
 
 const SLIDES = platform.slides;
 const COUNT = SLIDES.length;
@@ -14,7 +14,7 @@ const EASE = "cubic-bezier(0.76,0,0.24,1)";
 /** Share of a slide's scroll slot the scroll must pass before the slide flips. */
 const EDGE = 0.06;
 /** Shortest time a slide stays up before the next one, however fast the scroll. */
-const STEP_MS = 420;
+const STEP_MS = 480;
 
 function FeatureLabel({
   title,
@@ -78,7 +78,7 @@ function ScrollPlatform() {
   const stepTimerRef = useRef(0);
   const lastSlotRef = useRef(0);
   const playedRef = useRef<ReturnType<typeof collapseOncePlayed> | null>(null);
-  const gateRef = useRef<ReturnType<typeof gateFlicks> | null>(null);
+  const gateRef = useRef<ReturnType<typeof holdUntilPlayed> | null>(null);
   const [active, setActive] = useState(0);
   const [reduce, setReduce] = useState(false);
 
@@ -101,6 +101,7 @@ function ScrollPlatform() {
     const step = () => {
       stepTimerRef.current = 0;
       if (activeRef.current >= targetRef.current) {
+        if (activeRef.current >= COUNT - 1) gateRef.current?.release();
         playedRef.current?.check();
         return;
       }
@@ -130,8 +131,19 @@ function ScrollPlatform() {
           () => activeRef.current >= COUNT - 1 && !stepTimerRef.current,
         );
         playedRef.current = played;
-        // Until then a flick is stopped at its start and at its end.
-        gateRef.current = gateFlicks(el, pinned, () => played.collapsed());
+        // Scrolled through faster than it can play, the page waits at its end.
+        gateRef.current = holdUntilPlayed(
+          el,
+          pinned,
+          () => activeRef.current >= COUNT - 1 && !stepTimerRef.current,
+          () => {
+            window.clearTimeout(stepTimerRef.current);
+            stepTimerRef.current = 0;
+            activeRef.current = COUNT - 1;
+            targetRef.current = COUNT - 1;
+            setActive(COUNT - 1);
+          },
+        );
         if (played.restored) {
           activeRef.current = COUNT - 1;
           targetRef.current = COUNT - 1;
