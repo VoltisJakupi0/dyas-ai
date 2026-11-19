@@ -158,11 +158,17 @@ export function Orbit() {
     );
     io.observe(root);
 
+    // Letters light up as they pass the reading line on the way down and stay
+    // lit: scrolling back up never dims them again.
+    const lit = new Array<number>(chars.length).fill(0);
     const paint = () => {
       const line = viewportHeight() * 0.58;
-      chars.forEach((el) => {
+      chars.forEach((el, i) => {
+        if (lit[i] >= 1) return;
         const y = el.getBoundingClientRect().top;
         const t = Math.max(0, Math.min(1, (line - y) / 88));
+        if (t <= lit[i]) return;
+        lit[i] = t;
         el.style.opacity = String(0.28 + t * 0.72);
       });
     };

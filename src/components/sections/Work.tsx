@@ -32,6 +32,8 @@ export function Work() {
     };
 
     const n = work.cases.length;
+    let lastSlot = 0;
+    let goingUp = false;
 
     const tick = () => {
       if (reduced || mobileMq.matches) {
@@ -41,6 +43,27 @@ export function Work() {
       const p = scrollProgress(track);
       const slot = p * n;
       const fade = 0.22;
+      if (Math.abs(slot - lastSlot) > 0.0005) {
+        goingUp = slot < lastSlot;
+        lastSlot = slot;
+      }
+
+      // Scrolling back up: the case for the current position is simply shown,
+      // with none of the transitions that play on the way down.
+      if (goingUp) {
+        const current = Math.max(0, Math.min(n - 1, Math.floor(slot)));
+        caseRefs.current.forEach((node, i) => {
+          if (!node) return;
+          node.style.opacity = i === current ? "1" : "0";
+          node.style.pointerEvents = i === current ? "auto" : "none";
+          node.style.filter = "";
+          const inner = node.querySelector<HTMLElement>(".dyas-case__inner");
+          if (inner) inner.style.translate = "0 0px";
+          const shots = node.querySelector<HTMLElement>(".dyas-gallery__row");
+          if (shots) shots.style.scale = "1";
+        });
+        return;
+      }
 
       caseRefs.current.forEach((node, i) => {
         if (!node) return;

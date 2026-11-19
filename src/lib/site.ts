@@ -91,7 +91,7 @@ export const nav = {
 
 export const hero = {
   headline: "Web, Mobile & AI Solutions, Built for Results.",
-  headlineLines: ["Web, Mobile & AI Solutions,", "Built for Results."],
+  headlineLines: ["Web, Mobile & AI Solutions", "Built for Results."],
   body: "From AI Agents to custom apps, we deliver scalable solutions with real ROI.",
   cta: "View Work",
   ctaHref: "#work",

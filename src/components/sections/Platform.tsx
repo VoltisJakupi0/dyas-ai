@@ -11,6 +11,8 @@ import { onScrollPaint, prefersReducedMotion, scrollProgress } from "@/lib/scrol
 const SLIDES = platform.slides;
 const COUNT = SLIDES.length;
 const EASE = "cubic-bezier(0.76,0,0.24,1)";
+/** Share of a slide's scroll slot the scroll must pass before the slide flips. */
+const EDGE = 0.06;
 
 function FeatureLabel({
   title,
@@ -69,16 +71,30 @@ function FeatureLabel({
 
 function ScrollPlatform() {
   const trackRef = useRef<HTMLDivElement>(null);
-  const [progress, setProgress] = useState(0);
+  const activeRef = useRef(0);
+  const lastSlotRef = useRef(0);
   const [active, setActive] = useState(0);
   const [reduce, setReduce] = useState(false);
 
   const sync = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
-    const p = scrollProgress(el, el.firstElementChild as HTMLElement | null);
-    setProgress(p);
-    setActive(Math.min(COUNT - 1, Math.floor(p * COUNT)));
+    const slot = scrollProgress(el, el.firstElementChild as HTMLElement | null) * COUNT;
+    // Scrolling back up switches slides instantly (see .dyas-scroll-up in CSS):
+    // the build-up only plays on the way down.
+    if (Math.abs(slot - lastSlotRef.current) > 0.0005) {
+      el.classList.toggle("dyas-scroll-up", slot < lastSlotRef.current);
+      lastSlotRef.current = slot;
+    }
+    // Only re-render when the slide changes, and only once the scroll is
+    // clearly inside the next slot, so a touch resting on a boundary (or iOS
+    // rubber-banding) cannot flip the slide back and forth.
+    const current = activeRef.current;
+    if (slot >= current - EDGE && slot < current + 1 + EDGE) return;
+    const next = Math.max(0, Math.min(COUNT - 1, Math.floor(slot)));
+    if (next === current) return;
+    activeRef.current = next;
+    setActive(next);
   }, []);
 
   useEffect(() => {
@@ -99,19 +115,20 @@ function ScrollPlatform() {
   }, [sync]);
 
   const goTo = useCallback((index: number) => {
-    if (prefersReducedMotion() || window.matchMedia("(max-width: 1023px)").matches) {
+    if (prefersReducedMotion()) {
+      activeRef.current = index;
       setActive(index);
       return;
     }
     const el = trackRef.current;
     if (!el) return;
-    const range = el.offsetHeight - (window.visualViewport?.height ?? window.innerHeight);
+    const pinned = el.firstElementChild as HTMLElement | null;
+    const range = el.offsetHeight - (pinned?.offsetHeight || window.innerHeight);
     const start = el.getBoundingClientRect().top + window.scrollY;
     const t = COUNT <= 1 ? 0 : (index + 0.5) / COUNT;
     window.scrollTo({ top: start + t * range, behavior: "smooth" });
   }, []);
 
-  const slide = SLIDES[active];
   const left = SLIDES.filter((_, i) => i % 2 === 0);
   const right = SLIDES.filter((_, i) => i % 2 === 1);
 
@@ -161,7 +178,7 @@ function ScrollPlatform() {
           <div className="relative min-h-0 p-6">
             <CornerFrame tick="text-stroke-2" className="size-full min-h-0">
               <div className="relative size-full min-h-0 overflow-clip p-4 md:p-6">
-                <PlatformStack progress={progress} active={active} />
+                <PlatformStack active={active} />
               </div>
             </CornerFrame>
             <div className="bg-stroke-1 pointer-events-none absolute inset-y-0 -left-px w-px" />
@@ -178,20 +195,41 @@ function ScrollPlatform() {
           <div className="bg-stroke-1 pointer-events-none absolute right-0 bottom-0 h-4 w-px" />
         </div>
 
-        <div className="flex h-full min-h-0 flex-col gap-4 px-1 pt-4 pb-4 lg:hidden">
-          <div className="mx-auto flex w-full max-w-md shrink-0 flex-col items-center text-center">
-            <p className="text-heading-28 text-balance">{slide.title}</p>
-            <p className="text-body-18-light mt-3 max-w-80 text-pretty opacity-80">{slide.body}</p>
-            <a href={slide.href} className="text-nav-link mt-3 inline-block underline underline-offset-4">
-              Explore More
-            </a>
+        {/* Phones and tablets. The top padding clears the header that drops in
+            on scroll-up; the copy block is as tall as its longest slide and the
+            stack takes whatever is left, so the whole thing always fits the
+            pinned screen and nothing moves when the slide changes. */}
+        <div className="flex h-full min-h-0 flex-col justify-center gap-4 px-1 pt-[var(--header-height)] pb-4 lg:hidden">
+          <div className="mx-auto grid w-full max-w-md shrink-0">
+            {SLIDES.map((item, i) => (
+              <div
+                key={item.title}
+                className="col-start-1 row-start-1 flex flex-col items-center text-center transition-opacity duration-300"
+                style={{
+                  opacity: i === active ? 1 : 0,
+                  pointerEvents: i === active ? "auto" : "none",
+                  transitionDelay: i === active ? "120ms" : "0ms",
+                }}
+                aria-hidden={i !== active}
+              >
+                <p className="text-heading-28 text-balance">{item.title}</p>
+                <p className="text-body-18-light mt-3 max-w-80 text-pretty opacity-80">{item.body}</p>
+                <a
+                  href={item.href}
+                  tabIndex={i === active ? undefined : -1}
+                  className="text-nav-link mt-3 inline-block underline underline-offset-4"
+                >
+                  Explore More
+                </a>
+              </div>
+            ))}
           </div>
 
-          <div className="relative h-[min(110vw,480px)] shrink-0">
+          <div className="relative max-h-[min(110vw,480px)] min-h-0 flex-1 basis-0">
             <CornerFrame tick="text-stroke-2" className="h-full min-h-0">
               <div className="flex min-h-0 flex-1 items-center justify-center overflow-clip p-4">
                 <div className="relative aspect-[634/760] h-full max-h-full w-full max-w-[22rem]">
-                  <PlatformStack progress={progress} active={active} />
+                  <PlatformStack active={active} />
                 </div>
               </div>
             </CornerFrame>
@@ -205,11 +243,16 @@ function ScrollPlatform() {
                 aria-label={item.title}
                 aria-pressed={i === active}
                 onClick={() => goTo(i)}
-                className={cn(
-                  "h-11 min-w-11 rounded-full border border-stroke-1 transition-colors duration-300",
-                  i === active ? "bg-sun w-5" : "bg-stroke-1 w-1.5",
-                )}
-              />
+                className="grid h-11 min-w-8 place-items-center px-1"
+              >
+                {/* Small pill, 44px-tall tap target. */}
+                <span
+                  className={cn(
+                    "h-2 rounded-full transition-all duration-300",
+                    i === active ? "bg-sun w-6" : "bg-stroke-2/50 w-2",
+                  )}
+                />
+              </button>
             ))}
           </div>
         </div>

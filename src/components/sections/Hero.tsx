@@ -145,6 +145,9 @@ export function Hero() {
       });
     };
 
+    // The showreel only plays forward: it holds the furthest point reached, so
+    // scrolling back up shows its settled frame instead of running in reverse.
+    let reached = 0;
     let stop = () => {};
     const configure = () => {
       stop();
@@ -154,7 +157,10 @@ export function Hero() {
         if (winRef.current) winRef.current.style.transform = "none";
         return;
       }
-      stop = onScrollPaint(() => apply(scrollProgress(stage, pinRef.current)));
+      stop = onScrollPaint(() => {
+        reached = Math.max(reached, scrollProgress(stage, pinRef.current));
+        apply(reached);
+      });
     };
     configure();
     noZoomMq.addEventListener("change", configure);

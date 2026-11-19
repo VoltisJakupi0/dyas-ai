@@ -340,7 +340,7 @@ const SCENES: { title: string; panel: ReactNode }[] = [
 
 const COUNT = SCENES.length;
 
-export function PlatformStack({ active }: { progress: number; active: number }) {
+export function PlatformStack({ active }: { active: number }) {
   const current = Math.min(COUNT - 1, Math.max(0, active));
   const scene = SCENES[current];
 
