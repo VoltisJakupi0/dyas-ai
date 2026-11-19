@@ -57,8 +57,10 @@ export function Integrations() {
                   <ul className="dyas-wire-row__logos">
                     {category.logos.map((logo) => (
                       <li key={logo.alt} className="dyas-wire-chip">
+                        {/* Not lazy: a late logo widens its chip, re-wraps the row and
+                            shifts the page under a fast scroll. They are 20 small SVGs. */}
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={logo.src} alt={logo.alt} loading="lazy" draggable={false} />
+                        <img src={logo.src} alt={logo.alt} decoding="async" draggable={false} />
                       </li>
                     ))}
                   </ul>

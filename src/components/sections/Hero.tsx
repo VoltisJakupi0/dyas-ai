@@ -25,6 +25,10 @@ const BEATS: Beat[] = [
 
 const BEAT_START = 0.28;
 const BEAT_END = 0.82;
+/* Phones and tablets skip the zoom-in, so the beats use the whole scroll track
+   and each one gets more room: stable whether you scroll slowly or flick. */
+const BEAT_START_COMPACT = 0;
+const BEAT_END_COMPACT = 0.92;
 
 function clamp(n: number, a: number, b: number) {
   return Math.max(a, Math.min(b, n));
@@ -34,19 +38,19 @@ function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
 }
 
-function focusPull(p: number, start: number, end: number, hold = false, blur = 12): CSSProperties {
+function focusPull(p: number, start: number, end: number, hold = false, blur = 12, from = 3): CSSProperties {
   const mid = (start + end) / 2;
   const inEnd = lerp(start, mid, 0.55);
   const outStart = lerp(mid, end, 0.45);
 
   if (p <= start) {
-    return { opacity: 0, transform: "scale(3)", filter: blur ? `blur(${blur}px)` : "none" };
+    return { opacity: 0, transform: `scale(${from})`, filter: blur ? `blur(${blur}px)` : "none" };
   }
   if (p < inEnd) {
     const t = (p - start) / Math.max(0.0001, inEnd - start);
     return {
       opacity: t,
-      transform: `scale(${lerp(3, 0.95, t)})`,
+      transform: `scale(${lerp(from, 0.95, t)})`,
       filter: blur ? `blur(${lerp(blur, 0, t)}px)` : "none",
     };
   }
@@ -111,20 +115,32 @@ export function Hero() {
         introRef.current.style.pointerEvents = "auto";
       }
       if (hintRef.current) {
-        const hint = p < 0.32 ? 0.6 : clamp(0.6 - (p - 0.32) / 0.08, 0, 0.6);
+        const hintEnd = noZoom ? 0.06 : 0.32;
+        const hint = p < hintEnd ? 0.6 : clamp(0.6 - (p - hintEnd) / 0.08, 0, 0.6);
         hintRef.current.style.opacity = String(hint);
       }
 
       const n = BEATS.length;
-      const span = (BEAT_END - BEAT_START) / n;
+      const beatStart = noZoom ? BEAT_START_COMPACT : BEAT_START;
+      const beatEnd = noZoom ? BEAT_END_COMPACT : BEAT_END;
+      const span = (beatEnd - beatStart) / n;
+      // Without the blur, two lines on screen at once read as a glitch, so on
+      // compact screens a beat is fully gone before the next one comes in.
+      const overlap = noZoom ? 1 : 1.25;
+      const from = noZoom ? 1.12 : 3;
       layersRef.current.forEach((el, i) => {
         if (!el) return;
-        const start = BEAT_START + i * span;
-        const end = start + span * 1.25;
+        const start = beatStart + i * span;
+        const end = start + span * overlap;
         const last = i === n - 1;
-        const st = focusPull(p, start, last ? Math.max(end, 0.85) : end, last && p >= start + span * 0.4, blur);
+        let st = focusPull(p, start, last ? Math.max(end, 0.85) : end, last && p >= start + span * 0.4, blur, from);
+        // The first line is already there when the window scrolls into view,
+        // so the terminal never sits empty.
+        if (noZoom && i === 0 && p < (start + end) / 2) {
+          st = { opacity: 1, transform: "scale(0.95)", filter: "none" };
+        }
         el.style.opacity = String(st.opacity ?? 0);
-        el.style.transform = String(st.transform ?? "scale(3)");
+        el.style.transform = String(st.transform ?? `scale(${from})`);
         el.style.filter = String(st.filter ?? "none");
       });
     };
@@ -138,7 +154,7 @@ export function Hero() {
         if (winRef.current) winRef.current.style.transform = "none";
         return;
       }
-      stop = onScrollPaint(() => apply(scrollProgress(stage)));
+      stop = onScrollPaint(() => apply(scrollProgress(stage, pinRef.current)));
     };
     configure();
     noZoomMq.addEventListener("change", configure);
@@ -157,7 +173,11 @@ export function Hero() {
           <div className="dyas-hero__row">
             <div className="dyas-hero__main">
               <h1 className="dyas-hero__headline dyas-reveal" style={{ "--reveal-delay": "120ms" } as CSSProperties}>
-                {hero.headline}
+                {hero.headlineLines.map((line) => (
+                  <span key={line} className="dyas-hero__line">
+                    {line}
+                  </span>
+                ))}
               </h1>
               <div className="dyas-hero__actions dyas-reveal" style={{ "--reveal-delay": "240ms" } as CSSProperties}>
                 <Button href={site.ctaHref}>{site.ctaLabel}</Button>

@@ -429,8 +429,20 @@ export function Embed() {
                     {pad(active + 1)} / {pad(STATIONS.length)}
                     <span>{station.role}</span>
                   </p>
-                  <h3 key={station.title}>{station.title}</h3>
-                  <p key={station.body}>{station.body}</p>
+                  <div className="dyas-floor__copy">
+                    <div>
+                      <h3 key={station.title}>{station.title}</h3>
+                      <p key={station.body}>{station.body}</p>
+                    </div>
+                    {/* Invisible copies of every station reserve the tallest
+                        caption, so the page never shifts as stations rotate. */}
+                    {STATIONS.map((s) => (
+                      <div key={s.title} className="dyas-floor__ghost" aria-hidden="true">
+                        <span className="dyas-floor__ghost-title">{s.title}</span>
+                        <span className="dyas-floor__ghost-body">{s.body}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
               <div className="bg-stroke-1 pointer-events-none absolute inset-y-0 left-0 w-px" />

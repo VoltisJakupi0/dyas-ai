@@ -6,8 +6,14 @@ export function clamp01(n: number) {
   return Math.max(0, Math.min(1, n));
 }
 
-export function scrollProgress(el: HTMLElement) {
-  const range = el.offsetHeight - viewportHeight();
+/**
+ * Progress (0–1) of a tall scroll track. Pass the sticky element pinned inside
+ * it when there is one: its height is the real sticky travel and, unlike the
+ * visual viewport, it does not change while mobile browser toolbars collapse
+ * mid-scroll, so the progress never jumps.
+ */
+export function scrollProgress(el: HTMLElement, pinned?: HTMLElement | null) {
+  const range = el.offsetHeight - (pinned?.offsetHeight || viewportHeight());
   if (range <= 0) return 0;
   return clamp01(-el.getBoundingClientRect().top / range);
 }

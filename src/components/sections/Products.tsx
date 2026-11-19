@@ -11,7 +11,7 @@ export function Products() {
           {products.label}
         </p>
         <h2 className="dyas-products__headline">{products.headline}</h2>
-        <p className="dyas-products__sub">{products.sub}</p>
+        {products.sub ? <p className="dyas-products__sub">{products.sub}</p> : null}
       </div>
 
       <div className="dyas-products__list">

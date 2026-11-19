@@ -91,6 +91,7 @@ export const nav = {
 
 export const hero = {
   headline: "Web, Mobile & AI Solutions, Built for Results.",
+  headlineLines: ["Web, Mobile & AI Solutions,", "Built for Results."],
   body: "From AI Agents to custom apps, we deliver scalable solutions with real ROI.",
   cta: "View Work",
   ctaHref: "#work",
@@ -124,7 +125,7 @@ export const logos: {
 export const products = {
   label: "Our products",
   headline: "Products we build and run",
-  sub: "Powered by Dyas AI",
+  sub: "",
   items: [
     {
       id: "folet",
@@ -495,7 +496,7 @@ export const footer = {
       title: "Menu",
       links: [
         { label: "Services", href: "/services" },
-        { label: "Products", href: "/products" },
+        { label: "Our Products", href: "/products" },
         { label: "Pricing", href: "/pricing" },
         { label: "About Us", href: "/about-us" },
         { label: "Contact Us", href: "/contact-us" },
@@ -517,7 +518,7 @@ export const footer = {
       ],
     },
   ],
-  copyright: "©2026 Powered by Dyas AI",
+  copyright: "©2026 Dyas AI",
 };
 
 export const pages = {
@@ -527,7 +528,7 @@ export const pages = {
       "Products we build and run: Folet, the AI platform for unique nature stays, and Raft AI for shelf monitoring from store cameras.",
     breadcrumb: ["Home", "Products"],
     headline: "Products we build and run",
-    sub: "Powered by Dyas AI",
+    sub: "",
   },
   services: {
     title: "AI Services | AI Agents, AI Chatbots, Web & Mobile Development - Dyas AI",

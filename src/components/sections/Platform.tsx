@@ -76,7 +76,7 @@ function ScrollPlatform() {
   const sync = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
-    const p = scrollProgress(el);
+    const p = scrollProgress(el, el.firstElementChild as HTMLElement | null);
     setProgress(p);
     setActive(Math.min(COUNT - 1, Math.floor(p * COUNT)));
   }, []);
