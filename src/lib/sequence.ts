@@ -62,8 +62,10 @@ export function mountSequence({
 const DECK_ENTER = 0.35;
 /** Scroll slots after the last card has come in, as a share of one slot. Matches the CSS track height. */
 const DECK_TAIL = 0.25;
-// The curve iOS uses for sheets: quick but without a jump at the start.
-const DECK_EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
+// Starts at about its average speed and lands softly, so a card glides up. A
+// sharper ease-out covers nearly the whole distance in the first third of the
+// time, and the card read as shooting in however long the slide was.
+const DECK_EASE = "cubic-bezier(0.3, 0.3, 0.2, 1)";
 
 /**
  * A deck of cards stacked in one pinned screen: each card after the first
@@ -82,8 +84,8 @@ export function mountDeck({
   track,
   pin,
   cards,
-  duration = 660,
-  gap = 440,
+  duration = 800,
+  gap = 560,
 }: {
   id: string;
   track: HTMLElement;
