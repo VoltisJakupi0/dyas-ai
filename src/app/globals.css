@@ -1168,6 +1168,10 @@ html.dyas-hold {
   gap: clamp(48px, 16vh, 200px);
 }
 
+.dyas-offer__pin {
+  display: contents;
+}
+
 .dyas-offer-card {
   position: sticky;
   top: clamp(88px, 12vh, 150px);
@@ -1356,29 +1360,76 @@ html.dyas-hold {
   .dyas-offer__heading {
     font-size: clamp(28px, 6vw, 44px);
   }
+  /* The cards are a deck in one pinned screen: each slides up over the one
+     before it, driven from OfferDeck.tsx (mountDeck), so a fast scroll cannot
+     rush it. The track is one slot of scroll per transition plus a short tail. */
   .dyas-offer__cards {
-    /* Extra space between sticky cards so the stack doesn’t rush past. */
-    gap: clamp(48px, 28vh, 220px);
+    display: block;
+    height: calc((var(--offer-count, 3) - 0.75) * 110vh + 100vh);
+    height: calc((var(--offer-count, 3) - 0.75) * 110vh + 100svh);
+  }
+  .dyas-offer__pin {
+    display: block;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
   }
   .dyas-offer-card {
     --rot: 0deg !important;
-    top: calc(64px + env(safe-area-inset-top, 0px));
-    min-height: min(78svh, 620px);
+    position: absolute;
+    /* Below the header that drops in on scroll-up. */
+    top: calc(var(--header-height) + env(safe-area-inset-top, 0px) + 4px);
+    bottom: 16px;
+    left: 0;
+    right: 0;
     width: min(520px, 100%);
+    min-height: 0;
+    margin-inline: auto;
+    overflow: hidden;
+    transform: none;
+  }
+  /* Waits below the screen until the script brings it in. */
+  .dyas-offer-card:not(:first-child) {
+    transform: translate3d(0, 100vh, 0);
+  }
+}
+
+/* Without motion the deck is a plain list again. */
+@media (max-width: 1024px) and (prefers-reduced-motion: reduce) {
+  .dyas-offer__cards {
+    display: flex;
+    height: auto;
+    gap: 24px;
+  }
+  .dyas-offer__pin {
+    display: contents;
+  }
+  .dyas-offer-card,
+  .dyas-offer-card:not(:first-child) {
+    position: static;
+    transform: none;
+    min-height: 0;
+  }
+  .dyas-work .dyas-work__track,
+  .dyas-work .dyas-work__pin {
+    height: auto;
+    overflow: visible;
+  }
+  .dyas-work .dyas-work__pin {
+    position: static;
+  }
+  .dyas-work .dyas-case,
+  .dyas-work .dyas-case:not(:first-child) {
+    position: static !important;
+    height: auto !important;
+    transform: none;
   }
 }
 
 @media (max-width: 640px) {
-  .dyas-offer__cards {
-    gap: 45vh;
-  }
   .dyas-offer-card {
-    min-height: 85svh;
     padding: 24px;
-    top: calc(52px + env(safe-area-inset-top, 0px));
-  }
-  .dyas-offer-card:last-child {
-    min-height: 0;
   }
 }
 
@@ -2078,12 +2129,16 @@ html.dyas-hold {
     margin-bottom: 0;
     padding-top: clamp(32px, 8vw, 56px);
   }
-  .dyas-work__track,
+  /* The cases are a deck in one pinned screen: each slides up over the one
+     before it, driven from Work.tsx (mountDeck), so a fast scroll cannot rush
+     it. The track is one slot of scroll per transition plus a short tail. */
+  .dyas-work__track {
+    height: calc((var(--case-count, 4) - 0.75) * 110vh + 100vh);
+    height: calc((var(--case-count, 4) - 0.75) * 110vh + 100svh);
+  }
   .dyas-work__pin {
-    display: contents !important;
-    height: auto !important;
-    min-height: 0 !important;
-    overflow: visible !important;
+    height: 100vh;
+    height: 100svh;
   }
   .dyas-work .dyas-reveal,
   .dyas-work .dyas-case__title,
@@ -2098,21 +2153,18 @@ html.dyas-hold {
     visibility: visible !important;
   }
   .dyas-case {
-    position: sticky !important;
-    inset: auto !important;
-    top: 0 !important;
+    /* Fills the pinned screen (one small-viewport tall: svh does not change
+       when the browser toolbar hides, so nothing jumps). */
+    position: absolute !important;
+    inset: 0 !important;
     width: 100% !important;
-    /* Exactly one small-viewport tall, so the whole card (copy + shot) is on
-       screen while it is pinned and the next card covers it completely. svh
-       does not change when the browser toolbar hides, so nothing jumps. */
-    height: 100vh !important;
-    height: 100svh !important;
+    height: 100% !important;
     min-height: 0 !important;
     margin-bottom: 0;
     opacity: 1 !important;
     filter: none !important;
     pointer-events: auto !important;
-    transform: none !important;
+    will-change: transform;
     /* Clears the notch strip and the header that drops in on scroll-up. */
     padding: calc(var(--header-height) + env(safe-area-inset-top, 0px)) 0 0 !important;
     background: var(--ground) !important;
@@ -2124,12 +2176,10 @@ html.dyas-hold {
     z-index: calc(var(--i, 0) + 1);
     box-shadow: none;
   }
-  /* Each following card reads as a sheet sliding over the pinned one. The top
-     margin is the scroll distance the pinned card holds before it is covered
-     (on the incoming card, so the pinned one never drifts as the stack ends). */
+  /* Each following card reads as a sheet sliding over the one before it. It
+     waits below the screen until the script brings it in. */
   .dyas-case:not(:first-child) {
-    margin-top: 22vh;
-    margin-top: 22svh;
+    transform: translate3d(0, 100vh, 0);
     border-top: 1px solid var(--line);
     border-radius: 20px 20px 0 0;
     box-shadow: 0 -16px 40px rgba(17, 17, 17, 0.08);

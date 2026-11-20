@@ -4,15 +4,8 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import Image from "next/image";
 import { Gallery } from "@/components/Gallery";
 import { work } from "@/lib/site";
-import {
-  clamp01,
-  collapseOncePlayed,
-  forwardOnly,
-  holdUntilPlayed,
-  onScrollPaint,
-  prefersReducedMotion,
-  scrollProgress,
-} from "@/lib/scroll";
+import { clamp01, prefersReducedMotion } from "@/lib/scroll";
+import { mountDeck, mountSequence } from "@/lib/sequence";
 
 export function Work() {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -22,6 +15,7 @@ export function Work() {
     const track = trackRef.current;
     if (!track) return;
 
+    const pin = track.firstElementChild as HTMLElement | null;
     const reduced = prefersReducedMotion();
     const mobileMq = window.matchMedia("(max-width: 1024px)");
     const coarse = window.matchMedia("(pointer: coarse)").matches;
@@ -29,7 +23,7 @@ export function Work() {
     const reset = () => {
       caseRefs.current.forEach((node) => {
         if (!node) return;
-        node.style.opacity = mobileMq.matches ? "1" : "";
+        node.style.opacity = "";
         node.style.filter = "";
         node.style.pointerEvents = "";
         const inner = node.querySelector<HTMLElement>(".dyas-case__inner");
@@ -42,6 +36,7 @@ export function Work() {
     const n = work.cases.length;
     const fade = 0.22;
 
+    // Desktop: the cases crossfade in one pinned screen.
     const paint = (p: number) => {
       const slot = p * n;
 
@@ -73,62 +68,37 @@ export function Work() {
       });
     };
 
-    // The case sequence only plays forward: it holds the furthest point
-    // reached, so scrolling back up never runs it in reverse (reload to
-    // replay). Turning back mid-crossfade finishes the crossfade.
-    const latch = forwardOnly(
-      (p) => {
-        paint(p);
-        if (p < 1) return;
-        gate.release();
-        played.check();
-      },
-      (p) => {
-        const slot = p * n;
-        const i = Math.floor(slot);
-        return i < n - 1 && slot - i > 1 - fade ? (i + 1) / n : p;
-      },
-      2800,
-    );
-
-    const tick = () => {
-      if (reduced || mobileMq.matches) {
-        reset();
+    let unmount = () => {};
+    const configure = () => {
+      unmount();
+      unmount = () => {};
+      reset();
+      if (reduced || !pin) return;
+      if (mobileMq.matches) {
+        // Phones and tablets: each case slides up over the one before it.
+        const cards = caseRefs.current.filter((node): node is HTMLElement => !!node);
+        unmount = mountDeck({ id: "work", track, pin, cards });
         return;
       }
-      gate.check();
-      latch.update(scrollProgress(track));
-      played.check();
-    };
-    // Once played, the track shrinks to the pinned screen (last case showing).
-    const played = collapseOncePlayed("work", track, track.firstElementChild as HTMLElement | null, () =>
-      latch.done(),
-    );
-    // Scrolled through faster than it can play, the page waits at its end.
-    const gate = holdUntilPlayed(
-      track,
-      track.firstElementChild as HTMLElement | null,
-      // Only a sequence that has fallen behind the scroll needs the wait.
-      () => latch.done() || !latch.lagging(),
-      () => latch.set(1),
-    );
-    if (played.restored) latch.set(1);
-
-    let stop = () => {};
-    const configure = () => {
-      stop();
-      latch.stop();
-      if (reduced || mobileMq.matches) reset();
-      else stop = onScrollPaint(tick);
+      unmount = mountSequence({
+        id: "work",
+        track,
+        pin,
+        paint,
+        // Turning back mid-crossfade finishes the crossfade.
+        rest: (p) => {
+          const slot = p * n;
+          const i = Math.floor(slot);
+          return i < n - 1 && slot - i > 1 - fade ? (i + 1) / n : p;
+        },
+        minDuration: 2800,
+      });
     };
     configure();
     mobileMq.addEventListener("change", configure);
 
     return () => {
-      stop();
-      latch.stop();
-      played.stop();
-      gate.stop();
+      unmount();
       mobileMq.removeEventListener("change", configure);
       reset();
     };

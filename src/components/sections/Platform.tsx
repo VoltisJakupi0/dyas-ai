@@ -14,7 +14,7 @@ const EASE = "cubic-bezier(0.76,0,0.24,1)";
 /** Share of a slide's scroll slot the scroll must pass before the slide flips. */
 const EDGE = 0.06;
 /** Shortest time a slide stays up before the next one, however fast the scroll. */
-const STEP_MS = 480;
+const STEP_MS = 650;
 
 function FeatureLabel({
   title,

@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { OfferDeck } from "@/components/sections/OfferDeck";
 import { problem } from "@/lib/site";
 
 const TONE = {
@@ -16,7 +17,7 @@ export function Problem() {
           <p className="dyas-offer__sub">{problem.body}</p>
         </header>
 
-        <div className="dyas-offer__cards">
+        <OfferDeck>
           {problem.cards.map((card) => {
             const tone = TONE[card.tone];
             return (
@@ -48,7 +49,7 @@ export function Problem() {
               </article>
             );
           })}
-        </div>
+        </OfferDeck>
       </div>
     </section>
   );
