@@ -82,8 +82,8 @@ export function mountDeck({
   track,
   pin,
   cards,
-  duration = 560,
-  gap = 380,
+  duration = 660,
+  gap = 440,
 }: {
   id: string;
   track: HTMLElement;
@@ -99,6 +99,7 @@ export function mountDeck({
   let shown = 0;
   let target = 0;
   let timer = 0;
+  let pinnedAt = 0;
   let finished = n <= 1;
 
   // A waiting card sits in place underneath the first one rather than below
@@ -107,6 +108,9 @@ export function mountDeck({
   for (const img of cards.flatMap((card) => [...card.querySelectorAll("img")])) {
     img.decode?.().catch(() => {});
   }
+  // Stacking is set explicitly: a waiting card is below every card that is in
+  // (left to the DOM order, the last card would sit on top of the first and the
+  // deck would open on its end), and each card in is above the ones before it.
   const wait = (card: HTMLElement) => {
     card.style.transition = "none";
     card.style.zIndex = "0";
@@ -114,14 +118,14 @@ export function mountDeck({
   };
   const land = (card: HTMLElement) => {
     card.style.transition = "none";
-    card.style.zIndex = "";
+    card.style.zIndex = String(cards.indexOf(card) + 1);
     card.style.transform = "translate3d(0, 0, 0)";
   };
   const slideIn = (card: HTMLElement) => {
     // Back on top and just below the screen (the extra distance keeps its
     // shadow out of view), then slides up from there.
     card.style.transition = "none";
-    card.style.zIndex = "";
+    card.style.zIndex = String(cards.indexOf(card) + 1);
     card.style.transform = `translate3d(0, ${pin.offsetHeight + 80}px, 0)`;
     void card.offsetHeight;
     card.style.transition = `transform ${duration}ms ${DECK_EASE}`;
@@ -138,6 +142,12 @@ export function mountDeck({
   const advance = () => {
     timer = 0;
     if (shown < target) {
+      // The first card gets its moment too before the next one covers it.
+      const hold = shown === 0 ? pinnedAt + gap - performance.now() : 0;
+      if (hold > 0) {
+        timer = window.setTimeout(advance, hold);
+        return;
+      }
       shown += 1;
       slideIn(cards[shown]);
       // The next card may follow once this one is well on its way; the deck
@@ -165,6 +175,7 @@ export function mountDeck({
     gate.check();
     if (!finished) {
       const p = scrollProgress(track, pin);
+      if (p > 0 && !pinnedAt) pinnedAt = performance.now();
       const slot = p * slots;
       let next = p >= 1 ? n - 1 : 0;
       for (let i = 1; i < n; i++) if (slot >= i - 1 + DECK_ENTER) next = i;

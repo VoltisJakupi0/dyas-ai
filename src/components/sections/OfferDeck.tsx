@@ -25,7 +25,7 @@ export function OfferDeck({ children }: { children: ReactNode }) {
       if (!mobileMq.matches) return;
       const cards = [...pin.querySelectorAll<HTMLElement>(":scope > .dyas-offer-card")];
       // A touch slower than the work deck: these are read, not glanced at.
-      unmount = mountDeck({ id: "offer", track, pin, cards, duration: 720, gap: 560 });
+      unmount = mountDeck({ id: "offer", track, pin, cards, duration: 760, gap: 580 });
     };
     configure();
     mobileMq.addEventListener("change", configure);
