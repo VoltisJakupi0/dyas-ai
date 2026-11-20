@@ -260,18 +260,6 @@ export const work = {
       ],
       images: ["/images/work/ai2-commerce-robot.jpg", "/images/work/ai-commerce-03.jpg", "/images/work/ai2-commerce-obj.jpg"],
     },
-    {
-      name: "Appointment & Booking Agent",
-      body: "Automates scheduling, reminders, and confirmations for clinics, services, and consultations. Reduces no-shows and manages your calendar efficiently.",
-      industry: "Scheduling",
-      tags: ["Reminders", "Calendar Sync"],
-      stats: [
-        { label: "Booking", value: "Auto" },
-        { label: "Reminders", value: "Auto" },
-        { label: "Calendar sync", value: "Live" },
-      ],
-      images: ["/images/work/ai2-booking-robot.jpg", "/images/work/ai-booking-02.jpg", "/images/work/ai2-booking-obj.jpg"],
-    },
   ],
 };
 

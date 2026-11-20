@@ -669,12 +669,6 @@ body::before {
   margin-top: clamp(24px, 3vw, 48px);
 }
 
-/* The page waiting at the end of a pinned sequence that is still playing
-   (see holdUntilPlayed): it cannot scroll until the sequence is done. */
-html.dyas-hold {
-  overflow-y: hidden;
-}
-
 /* A pinned sequence that has fully played: its track is just the pinned
    screen, with no extra scroll length (see collapseOncePlayed). */
 .dyas-played {
@@ -1365,8 +1359,8 @@ html.dyas-hold {
      rush it. The track is one slot of scroll per transition plus a short tail. */
   .dyas-offer__cards {
     display: block;
-    height: calc((var(--offer-count, 3) - 0.75) * 110vh + 100vh);
-    height: calc((var(--offer-count, 3) - 0.75) * 110vh + 100svh);
+    height: calc((var(--offer-count, 3) - 0.75) * 85vh + 100vh);
+    height: calc((var(--offer-count, 3) - 0.75) * 85vh + 100svh);
   }
   .dyas-offer__pin {
     display: block;
@@ -1391,7 +1385,7 @@ html.dyas-hold {
   }
   /* Waits below the screen until the script brings it in. */
   .dyas-offer-card:not(:first-child) {
-    transform: translate3d(0, 100vh, 0);
+    transform: translate3d(0, calc(100vh + 80px), 0);
   }
 }
 
@@ -2133,8 +2127,8 @@ html.dyas-hold {
      before it, driven from Work.tsx (mountDeck), so a fast scroll cannot rush
      it. The track is one slot of scroll per transition plus a short tail. */
   .dyas-work__track {
-    height: calc((var(--case-count, 4) - 0.75) * 110vh + 100vh);
-    height: calc((var(--case-count, 4) - 0.75) * 110vh + 100svh);
+    height: calc((var(--case-count, 4) - 0.75) * 85vh + 100vh);
+    height: calc((var(--case-count, 4) - 0.75) * 85vh + 100svh);
   }
   .dyas-work__pin {
     height: 100vh;
@@ -2179,7 +2173,7 @@ html.dyas-hold {
   /* Each following card reads as a sheet sliding over the one before it. It
      waits below the screen until the script brings it in. */
   .dyas-case:not(:first-child) {
-    transform: translate3d(0, 100vh, 0);
+    transform: translate3d(0, calc(100vh + 80px), 0);
     border-top: 1px solid var(--line);
     border-radius: 20px 20px 0 0;
     box-shadow: 0 -16px 40px rgba(17, 17, 17, 0.08);

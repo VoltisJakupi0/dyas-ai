@@ -187,12 +187,11 @@ export function Hero() {
     // ...and once it has played, its scroll track shrinks to one screen, so the
     // way back up is not several screens of a frozen frame.
     const played = collapseOncePlayed("hero", stage, pinRef.current, () => latch.done());
-    // Scrolled through faster than it can play, the page waits at its end.
+    // Scrolled through faster than it can play, the pinned screen waits for it.
     const gate = holdUntilPlayed(
       stage,
       pinRef.current,
-      // Only a sequence that has fallen behind the scroll needs the wait.
-      () => latch.done() || !latch.lagging(),
+      () => latch.done(),
       () => latch.set(1),
     );
     let stop = () => {};

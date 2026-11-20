@@ -4,7 +4,7 @@ import { clamp01, collapseOncePlayed, forwardOnly, holdUntilPlayed, onScrollPain
  * A pinned, scroll-linked sequence with the house rules applied:
  * - it follows the scroll, but never faster than `minDuration` for the whole
  *   thing, so a fast scroll still plays it smoothly;
- * - scrolled through faster than that, the page waits at its end until it is done;
+ * - scrolled through faster than that, the pinned screen stays until it is done;
  * - it only plays forward, and once played its scroll track collapses to the
  *   pinned screen, so the way back up is neither a rewind nor a frozen stretch.
  */
@@ -35,11 +35,11 @@ export function mountSequence({
     minDuration,
   );
   const played = collapseOncePlayed(id, track, pin, () => latch.done());
-  // Only a sequence that has fallen behind the scroll needs the wait.
+  // Scrolled through faster than it can play, the pinned screen waits for it.
   const gate = holdUntilPlayed(
     track,
     pin,
-    () => latch.done() || !latch.lagging(),
+    () => latch.done(),
     () => latch.set(1),
   );
   if (played.restored) latch.set(1);
@@ -73,7 +73,7 @@ export function mountDeck({
   track,
   pin,
   cards,
-  secondsPerCard = 0.6,
+  secondsPerCard = 0.32,
 }: {
   id: string;
   track: HTMLElement;
@@ -84,13 +84,21 @@ export function mountDeck({
   const n = cards.length;
   const slots = Math.max(1, n - 1 + DECK_TAIL);
 
+  // Cards waiting below are left painted (not hidden) and their images decoded
+  // up front, so a card never flashes in blank. The extra distance keeps a
+  // waiting card's shadow out of the pinned screen too.
+  for (const img of cards.flatMap((card) => [...card.querySelectorAll("img")])) {
+    img.decode?.().catch(() => {});
+  }
   const paint = (p: number) => {
     const slot = p * slots;
-    const height = pin.offsetHeight;
+    const away = pin.offsetHeight + 80;
     cards.forEach((card, i) => {
-      const entered = i === 0 ? 1 : clamp01((slot - (i - 1) - DECK_REST) / (1 - DECK_REST));
-      card.style.transform = `translate3d(0, ${((1 - entered) * height).toFixed(1)}px, 0)`;
-      card.style.visibility = entered > 0 ? "visible" : "hidden";
+      const t = i === 0 ? 1 : clamp01((slot - (i - 1) - DECK_REST) / (1 - DECK_REST));
+      // Eased in and out, so a card picks up speed and lands softly instead of
+      // sliding at one speed and stopping dead.
+      const entered = t * t * (3 - 2 * t);
+      card.style.transform = `translate3d(0, ${((1 - entered) * away).toFixed(1)}px, 0)`;
     });
   };
 
@@ -106,7 +114,6 @@ export function mountDeck({
     unmount();
     cards.forEach((card) => {
       card.style.transform = "";
-      card.style.visibility = "";
     });
   };
 }

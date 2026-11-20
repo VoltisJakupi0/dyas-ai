@@ -30,7 +30,7 @@ export function clamp01(n: number) {
  * mid-scroll, so the progress never jumps.
  */
 export function scrollProgress(el: HTMLElement, pinned?: HTMLElement | null) {
-  const range = el.offsetHeight - (pinned?.offsetHeight || viewportHeight());
+  const range = el.offsetHeight - (extension.get(el) ?? 0) - (pinned?.offsetHeight || viewportHeight());
   if (range <= 0) return 0;
   const done = -el.getBoundingClientRect().top;
   // Scroll positions are whole pixels: within one of the end is the end.
@@ -65,13 +65,11 @@ export function forwardOnly(
     const dt = last ? Math.min(64, now - last) : 16;
     last = now;
     const gap = reached - shown;
-    if (ms <= 0 || gap < 0.0008) shown = reached;
-    else {
-      // Eased: closes most of the gap quickly and settles gently, but never
-      // faster than the whole sequence in `ms`.
-      const eased = gap * (1 - Math.exp(-dt / 90));
-      shown = Math.min(reached, shown + Math.min(eased, dt / ms));
-    }
+    const cap = ms > 0 ? dt / ms : Infinity;
+    // Within the speed limit it is glued to the scroll (no trailing behind the
+    // finger). Scrolled faster, it plays at the limit and settles gently.
+    if (gap <= cap || gap < 0.0008) shown = reached;
+    else shown = Math.min(reached, shown + Math.min(cap, Math.max(gap * (1 - Math.exp(-dt / 90)), cap * 0.25)));
     paint(shown);
     if (shown < reached) raf = requestAnimationFrame(tick);
     else last = 0;
@@ -86,8 +84,6 @@ export function forwardOnly(
     },
     /** True once the whole sequence has been painted. */
     done: () => shown >= 1,
-    /** True while what is painted trails the scroll well behind (it was scrolled too fast). */
-    lagging: () => reached - shown > 0.12,
     update(raw: number) {
       if (raw >= reached) reached = raw;
       else if (raw < reached - 0.03) reached = Math.max(reached, rest(reached));
@@ -154,14 +150,19 @@ const playedStore = (() => {
  * very top of the page. Trading track height for spacer height leaves every
  * visible pixel and the scroll position exactly where they were, so it is safe
  * in the middle of a drag or a momentum scroll. The spacer itself is removed
- * (with the one scroll correction this needs) as soon as the scroll rests, or
- * at the latest just before it could come into view.
+ * (with the one scroll correction this needs) only while the page stands
+ * still, normally once the scroll rests: iOS ignores or delays a scroll
+ * correction made during a momentum scroll, which flashed the wrong content or
+ * even landed the page at its very end. Scrolling back up towards it, it has
+ * to go before it comes into view: on touch screens the scroll is brought to a
+ * stop first, then it goes.
  */
 const slack = (() => {
   let spacer: HTMLElement | null = null;
   let owed = 0;
   let timer = 0;
   let touching = false;
+  let stopping = false;
   let listening = false;
 
   const flush = () => {
@@ -182,16 +183,54 @@ const slack = (() => {
     if (Math.abs(shift) > 0.5) adjustScroll(shift);
   };
 
+  // Brings a (momentum) scroll to a stop, then flushes. On iOS `overflow:
+  // hidden` alone does not stop a momentum scroll, but a scroll to where the
+  // page already is does (a frame or so later).
+  const stopThenFlush = () => {
+    if (stopping) return;
+    stopping = true;
+    const root = document.documentElement;
+    root.style.overflow = "hidden";
+    let seen = window.scrollY;
+    let still = 0;
+    let frames = 0;
+    const halt = () => window.scrollTo({ top: window.scrollY, left: 0, behavior: "instant" });
+    halt();
+    const wait = () => {
+      const y = window.scrollY;
+      still = y === seen ? still + 1 : 0;
+      seen = y;
+      if (still < 2 && ++frames < 40) {
+        if (frames % 6 === 0) halt();
+        requestAnimationFrame(wait);
+        return;
+      }
+      flush();
+      root.style.overflow = "";
+      stopping = false;
+    };
+    requestAnimationFrame(wait);
+  };
+
+  let lastY = 0;
   const onScroll = () => {
     if (!owed) return;
     window.clearTimeout(timer);
-    // About to scroll into view: it has to go now.
-    if (window.scrollY < owed + viewportHeight() * 1.5) {
-      flush();
+    const y = window.scrollY;
+    const up = y < lastY;
+    lastY = y;
+    if (stopping) return;
+    // Scrolling back up and getting close: it has to go now.
+    if (up && y < owed + viewportHeight() * 2.5) {
+      if (window.matchMedia("(pointer: coarse)").matches) stopThenFlush();
+      else flush();
       return;
     }
     timer = window.setTimeout(() => {
-      if (!touching) flush();
+      if (touching) return;
+      // Still moving (a busy main thread can delay the scroll events): wait on.
+      if (window.scrollY !== lastY) onScroll();
+      else flush();
     }, 150);
   };
 
@@ -224,6 +263,7 @@ const slack = (() => {
       spacer.style.height = `${owed}px`;
       apply();
       listen();
+      lastY = window.scrollY;
       onScroll();
       return true;
     },
@@ -258,8 +298,13 @@ export function collapseOncePlayed(
   const check = () => {
     if (done || !pinned || !ready()) return;
     const cut = track.offsetHeight - pinned.offsetHeight;
-    if (cut <= 1 || track.getBoundingClientRect().top > 1 - cut) return;
-    done = slack.take(cut, () => track.classList.add(className));
+    const top = track.getBoundingClientRect().top;
+    // Only once the pinned screen has reached the top: from then on it can sit
+    // anywhere along its track (including a hold extension, see
+    // holdUntilPlayed). The length above it goes to the spacer, which keeps it
+    // exactly where it is; any rest of the track is below the screen.
+    if (cut <= 1 || top > 0.5) return;
+    done = slack.take(Math.min(cut, -top), () => track.classList.add(className));
     if (done) playedStore.add(id);
   };
 
@@ -273,13 +318,23 @@ export function collapseOncePlayed(
   };
 }
 
+/** Extra length a hold has added to a track (see holdUntilPlayed). */
+const extension = new WeakMap<HTMLElement, number>();
+
 /**
- * A pinned sequence is never skipped by scrolling fast. If the scroll reaches
- * the end of the pinned stretch before the sequence has finished playing, the
- * page is held there (it cannot scroll, see .dyas-hold) while the sequence
- * plays on at its own pace, exactly as if it had been scrolled slowly, and is
- * released the moment it is done. Jumps (anchor links, a restored position)
- * are not scrolls: they mark the sequence as played instead (`skip`).
+ * A pinned sequence is never skipped by scrolling fast. While it has not
+ * finished playing, its track is kept at least two screens longer than the
+ * scroll has got to, so the pinned screen stays put however far a fling
+ * carries, and the sequence plays on at its own pace. The extra length is
+ * below the screen, so adding it never moves anything, and it goes again with
+ * the rest of the track once the sequence has played (collapseOncePlayed).
+ *
+ * This does not fight the scroll: iOS keeps a momentum scroll going through
+ * `overflow: hidden` and applies scroll corrections late, so locking the page
+ * there overshot and snapped back (a visible jump).
+ *
+ * Jumps (anchor links, a restored position) are not scrolls: they mark the
+ * sequence as played instead (`skip`).
  */
 export function holdUntilPlayed(
   track: HTMLElement,
@@ -287,62 +342,57 @@ export function holdUntilPlayed(
   played: () => boolean,
   skip: () => void,
 ) {
-  const root = document.documentElement;
   let lastY = window.scrollY;
-  let holding = false;
-  let safety = 0;
   let first = true;
+  let base = 0;
+  let extra = 0;
 
-  const release = () => {
-    if (!holding) return;
-    holding = false;
-    window.clearTimeout(safety);
-    root.classList.remove("dyas-hold");
+  const extend = (px: number) => {
+    if (!extra) base = track.offsetHeight;
+    extra = px;
+    const height = px ? `${base + px}px` : "";
+    track.style.height = height;
+    track.style.minHeight = height;
+    if (px) extension.set(track, px);
+    else extension.delete(track);
+  };
+
+  const check = () => {
+    const y = window.scrollY;
+    const prev = lastY;
+    lastY = y;
+    if (!pinned) return;
+    const top = track.getBoundingClientRect().top;
+    const range = track.offsetHeight - extra - pinned.offsetHeight;
+    // Read every time: positions on the page shift when earlier sequences
+    // give their scroll length back.
+    const end = top + y + range;
+    if (played()) {
+      // The extension goes once the track has collapsed (the collapse overrides
+      // it) or while it is wholly below the screen; never from under the pin.
+      if (extra && (range <= 1 || y <= end)) extend(0);
+      return;
+    }
+    if (range <= 1) return;
+    if (first) {
+      first = false;
+      if (y >= end) skip();
+      return;
+    }
+    if (y - prev > viewportHeight() * 1.25 && y >= end - 1) {
+      skip();
+      return;
+    }
+    const margin = viewportHeight() * 2;
+    if (y + margin > end + extra) extend(Math.ceil(y + margin - end));
   };
 
   return {
-    release,
-    check() {
-      const y = window.scrollY;
-      const prev = lastY;
-      lastY = y;
-      if (!pinned || played()) {
-        release();
-        return;
-      }
-      const range = track.offsetHeight - pinned.offsetHeight;
-      if (range <= 1) return;
-      // Read every time: positions on the page shift when earlier sequences
-      // give their scroll length back.
-      const end = Math.ceil(track.getBoundingClientRect().top + y + range);
-      if (holding) {
-        if (Math.abs(y - end) > 1) {
-          adjustScroll(end - window.scrollY);
-          lastY = end;
-        }
-        return;
-      }
-      if (first) {
-        first = false;
-        if (y >= end) skip();
-        return;
-      }
-      const step = y - prev;
-      // One frame early (the next step would cross the end), so the scroll
-      // moves forward onto it instead of overshooting and coming back.
-      if (step <= 0 || prev >= end - 1 || y + step < end) return;
-      if (step > viewportHeight() * 1.25) {
-        if (y >= end) skip();
-        return;
-      }
-      holding = true;
-      root.classList.add("dyas-hold");
-      // Safety net: never keep the page locked for long.
-      safety = window.setTimeout(release, 6000);
-      adjustScroll(end - window.scrollY);
-      lastY = end;
+    check,
+    release: check,
+    stop() {
+      extend(0);
     },
-    stop: release,
   };
 }
 

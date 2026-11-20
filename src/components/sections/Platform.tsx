@@ -131,12 +131,12 @@ function ScrollPlatform() {
           () => activeRef.current >= COUNT - 1 && !stepTimerRef.current,
         );
         playedRef.current = played;
-        // Scrolled through faster than it can play, the page waits at its end.
+        // Scrolled through faster than it can play, the pinned screen waits for it.
         gateRef.current = holdUntilPlayed(
           el,
           pinned,
-          // Waits only while layers are still queued up behind the scroll.
-          () => activeRef.current >= COUNT - 1,
+          // Waits until the last layer has had its time on screen.
+          () => activeRef.current >= COUNT - 1 && !stepTimerRef.current,
           () => {
             window.clearTimeout(stepTimerRef.current);
             stepTimerRef.current = 0;
