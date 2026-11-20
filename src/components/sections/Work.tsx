@@ -91,7 +91,7 @@ export function Work() {
           const i = Math.floor(slot);
           return i < n - 1 && slot - i > 1 - fade ? (i + 1) / n : p;
         },
-        minDuration: 2800,
+        minDuration: 1800,
       });
     };
     configure();
@@ -167,7 +167,9 @@ export function Work() {
                           sizes="(max-width: 1024px) 100vw, 33vw"
                           quality={70}
                           priority={lcp}
-                          loading={lcp ? "eager" : "lazy"}
+                          // The middle shot is the one phones show: load it up front so
+                          // a card never slides in with an empty frame.
+                          loading={i === 1 ? "eager" : "lazy"}
                         />
                       </figure>
                       );

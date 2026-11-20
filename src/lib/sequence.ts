@@ -73,7 +73,7 @@ export function mountDeck({
   track,
   pin,
   cards,
-  secondsPerCard = 1.1,
+  secondsPerCard = 0.6,
 }: {
   id: string;
   track: HTMLElement;

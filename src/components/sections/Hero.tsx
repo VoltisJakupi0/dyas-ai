@@ -182,7 +182,7 @@ export function Hero() {
         played.check();
       },
       rest,
-      () => (noZoomMq.matches ? 2600 : 3200),
+      () => (noZoomMq.matches ? 1500 : 1900),
     );
     // ...and once it has played, its scroll track shrinks to one screen, so the
     // way back up is not several screens of a frozen frame.

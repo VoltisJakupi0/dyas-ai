@@ -6,7 +6,7 @@ import { nav, site } from "@/lib/site";
 import { Button } from "@/components/ui/Button";
 import { Wordmark } from "@/components/ui/Logo";
 import { cn } from "@/lib/cn";
-import { onScrollPaint, prefersReducedMotion, supportsScrollTimeline } from "@/lib/scroll";
+import { onScrollPaint, prefersReducedMotion, supportsScrollTimeline, wasAdjusted } from "@/lib/scroll";
 
 const TARGET_PX = 20;
 const COMPACT = "(max-width: 1024px)";
@@ -84,7 +84,13 @@ export function Header() {
         return;
       }
       setFrost(true);
+      // A scroll the page made itself (a layout change with nothing moving on
+      // screen) is not the user changing direction.
       const delta = y - lastYRef.current;
+      if (wasAdjusted() || Math.abs(delta) > window.innerHeight * 0.75) {
+        lastYRef.current = y;
+        return;
+      }
       if (delta > DIR_PX) {
         setAway(true);
         lastYRef.current = y;

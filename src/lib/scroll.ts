@@ -1,3 +1,20 @@
+let adjustedAt = -Infinity;
+
+/**
+ * Moves the scroll position for a layout change of our own (nothing on screen
+ * moves). Anything reading the scroll direction, like the header, should skip
+ * the step right after it: see `wasAdjusted`.
+ */
+export function adjustScroll(top: number) {
+  adjustedAt = performance.now();
+  window.scrollBy({ top, left: 0, behavior: "instant" });
+}
+
+/** True for the scroll event(s) that follow an `adjustScroll`. */
+export function wasAdjusted() {
+  return performance.now() - adjustedAt < 160;
+}
+
 export function viewportHeight() {
   return window.visualViewport?.height ?? window.innerHeight;
 }
@@ -47,7 +64,14 @@ export function forwardOnly(
     const ms = typeof minDuration === "function" ? minDuration() : minDuration;
     const dt = last ? Math.min(64, now - last) : 16;
     last = now;
-    shown = ms > 0 ? Math.min(reached, shown + dt / ms) : reached;
+    const gap = reached - shown;
+    if (ms <= 0 || gap < 0.0008) shown = reached;
+    else {
+      // Eased: closes most of the gap quickly and settles gently, but never
+      // faster than the whole sequence in `ms`.
+      const eased = gap * (1 - Math.exp(-dt / 90));
+      shown = Math.min(reached, shown + Math.min(eased, dt / ms));
+    }
     paint(shown);
     if (shown < reached) raf = requestAnimationFrame(tick);
     else last = 0;
@@ -62,8 +86,8 @@ export function forwardOnly(
     },
     /** True once the whole sequence has been painted. */
     done: () => shown >= 1,
-    /** True while what is painted trails the scroll (it was scrolled too fast). */
-    lagging: () => reached - shown > 0.02,
+    /** True while what is painted trails the scroll well behind (it was scrolled too fast). */
+    lagging: () => reached - shown > 0.12,
     update(raw: number) {
       if (raw >= reached) reached = raw;
       else if (raw < reached - 0.03) reached = Math.max(reached, rest(reached));
@@ -155,7 +179,7 @@ const slack = (() => {
     const before = anchor.getBoundingClientRect().top;
     el.style.height = "0px";
     const shift = anchor.getBoundingClientRect().top - before;
-    if (Math.abs(shift) > 0.5) window.scrollBy({ top: shift, left: 0, behavior: "instant" });
+    if (Math.abs(shift) > 0.5) adjustScroll(shift);
   };
 
   const onScroll = () => {
@@ -293,7 +317,7 @@ export function holdUntilPlayed(
       const end = Math.ceil(track.getBoundingClientRect().top + y + range);
       if (holding) {
         if (Math.abs(y - end) > 1) {
-          window.scrollTo({ top: end, left: 0, behavior: "instant" });
+          adjustScroll(end - window.scrollY);
           lastY = end;
         }
         return;
@@ -315,7 +339,7 @@ export function holdUntilPlayed(
       root.classList.add("dyas-hold");
       // Safety net: never keep the page locked for long.
       safety = window.setTimeout(release, 6000);
-      window.scrollTo({ top: end, left: 0, behavior: "instant" });
+      adjustScroll(end - window.scrollY);
       lastY = end;
     },
     stop: release,
