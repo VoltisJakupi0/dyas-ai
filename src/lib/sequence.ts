@@ -1,4 +1,4 @@
-import { clamp01, collapseOncePlayed, forwardOnly, holdUntilPlayed, onScrollPaint, scrollProgress } from "@/lib/scroll";
+import { collapseOncePlayed, forwardOnly, holdUntilPlayed, onScrollPaint, scrollProgress } from "@/lib/scroll";
 
 /**
  * A pinned, scroll-linked sequence with the house rules applied:
@@ -58,62 +58,132 @@ export function mountSequence({
   };
 }
 
-/** Share of each card's scroll slot it rests before the next card comes in. */
-const DECK_REST = 0.3;
-/** Scroll slots after the last card has landed, as a share of one slot. Matches the CSS track height. */
+/** Share of a card's scroll slot to pass before it comes in. */
+const DECK_ENTER = 0.35;
+/** Scroll slots after the last card has come in, as a share of one slot. Matches the CSS track height. */
 const DECK_TAIL = 0.25;
+// The curve iOS uses for sheets: quick but without a jump at the start.
+const DECK_EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
 
 /**
  * A deck of cards stacked in one pinned screen: each card after the first
- * slides up over the one before it. Used on phones and tablets, where the
- * stack used to be plain sticky cards that simply moved as fast as the scroll.
+ * slides up over the one before it. Used on phones and tablets.
+ *
+ * The scroll decides when a card comes in (once it is a little way into the
+ * card's slot); the slide itself is a CSS transition. A slide driven from
+ * script every frame trails the finger on iOS, where the page scrolls on
+ * another thread, and the cards travel faster than the scroll, so it read as
+ * lag. A transition runs on the compositor and is smooth whatever the main
+ * thread is doing. However fast the scroll, cards come in one at a time
+ * (`gap` apart) and the pinned screen stays until the last one has landed.
  */
 export function mountDeck({
   id,
   track,
   pin,
   cards,
-  secondsPerCard = 0.32,
+  duration = 560,
+  gap = 380,
 }: {
   id: string;
   track: HTMLElement;
   pin: HTMLElement;
   cards: HTMLElement[];
-  secondsPerCard?: number;
+  /** Length of one card's slide, ms. */
+  duration?: number;
+  /** Shortest time between two cards starting to come in, ms. */
+  gap?: number;
 }) {
   const n = cards.length;
   const slots = Math.max(1, n - 1 + DECK_TAIL);
+  let shown = 0;
+  let target = 0;
+  let timer = 0;
+  let finished = n <= 1;
 
-  // Cards waiting below are left painted (not hidden) and their images decoded
-  // up front, so a card never flashes in blank. The extra distance keeps a
-  // waiting card's shadow out of the pinned screen too.
+  // A waiting card sits in place underneath the first one rather than below
+  // the screen: off screen the browser would not paint it, and painting a
+  // full-screen photo the moment its slide starts dropped frames (on iOS).
   for (const img of cards.flatMap((card) => [...card.querySelectorAll("img")])) {
     img.decode?.().catch(() => {});
   }
-  const paint = (p: number) => {
-    const slot = p * slots;
-    const away = pin.offsetHeight + 80;
-    cards.forEach((card, i) => {
-      const t = i === 0 ? 1 : clamp01((slot - (i - 1) - DECK_REST) / (1 - DECK_REST));
-      // Eased in and out, so a card picks up speed and lands softly instead of
-      // sliding at one speed and stopping dead.
-      const entered = t * t * (3 - 2 * t);
-      card.style.transform = `translate3d(0, ${((1 - entered) * away).toFixed(1)}px, 0)`;
-    });
+  const wait = (card: HTMLElement) => {
+    card.style.transition = "none";
+    card.style.zIndex = "0";
+    card.style.transform = "translate3d(0, 0, 0)";
+  };
+  const land = (card: HTMLElement) => {
+    card.style.transition = "none";
+    card.style.zIndex = "";
+    card.style.transform = "translate3d(0, 0, 0)";
+  };
+  const slideIn = (card: HTMLElement) => {
+    // Back on top and just below the screen (the extra distance keeps its
+    // shadow out of view), then slides up from there.
+    card.style.transition = "none";
+    card.style.zIndex = "";
+    card.style.transform = `translate3d(0, ${pin.offsetHeight + 80}px, 0)`;
+    void card.offsetHeight;
+    card.style.transition = `transform ${duration}ms ${DECK_EASE}`;
+    card.style.transform = "translate3d(0, 0, 0)";
+  };
+  cards.forEach((card, i) => (i === 0 ? land(card) : wait(card)));
+
+  const finish = () => {
+    finished = true;
+    gate.release();
+    played.check();
   };
 
-  const rest = (p: number) => {
-    const slot = p * slots;
-    const i = Math.floor(slot);
-    return i < n - 1 && slot - i > DECK_REST ? Math.min(1, (i + 1) / slots) : p;
+  const advance = () => {
+    timer = 0;
+    if (shown < target) {
+      shown += 1;
+      slideIn(cards[shown]);
+      // The next card may follow once this one is well on its way; the deck
+      // has played once the last one has landed.
+      timer = window.setTimeout(advance, shown < n - 1 ? gap : duration);
+      return;
+    }
+    if (shown >= n - 1) finish();
   };
 
-  const unmount = mountSequence({ id, track, pin, paint, rest, minDuration: slots * secondsPerCard * 1000 });
+  // Everything in at once (a deck that played earlier, or a jump past it).
+  const showAll = () => {
+    window.clearTimeout(timer);
+    timer = 0;
+    shown = target = n - 1;
+    cards.forEach(land);
+    finished = true;
+  };
+
+  const played = collapseOncePlayed(id, track, pin, () => finished);
+  const gate = holdUntilPlayed(track, pin, () => finished, showAll);
+  if (played.restored) showAll();
+
+  const stop = onScrollPaint(() => {
+    gate.check();
+    if (!finished) {
+      const p = scrollProgress(track, pin);
+      const slot = p * slots;
+      let next = p >= 1 ? n - 1 : 0;
+      for (let i = 1; i < n; i++) if (slot >= i - 1 + DECK_ENTER) next = i;
+      // Forward only: scrolling back up never takes a card out again.
+      target = Math.max(target, next);
+      if (target > shown && !timer) advance();
+    }
+    played.check();
+  });
 
   return () => {
-    unmount();
+    stop();
+    window.clearTimeout(timer);
+    played.stop();
+    gate.stop();
     cards.forEach((card) => {
+      card.style.transition = "";
       card.style.transform = "";
+      card.style.zIndex = "";
     });
   };
 }

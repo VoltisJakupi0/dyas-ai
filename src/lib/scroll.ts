@@ -343,6 +343,7 @@ export function holdUntilPlayed(
   skip: () => void,
 ) {
   let lastY = window.scrollY;
+  let lastStep = 0;
   let first = true;
   let base = 0;
   let extra = 0;
@@ -359,8 +360,10 @@ export function holdUntilPlayed(
 
   const check = () => {
     const y = window.scrollY;
-    const prev = lastY;
+    const step = y - lastY;
+    const before = lastStep;
     lastY = y;
+    lastStep = step;
     if (!pinned) return;
     const top = track.getBoundingClientRect().top;
     const range = track.offsetHeight - extra - pinned.offsetHeight;
@@ -379,12 +382,19 @@ export function holdUntilPlayed(
       if (y >= end) skip();
       return;
     }
-    if (y - prev > viewportHeight() * 1.25 && y >= end - 1) {
+    // A jump (a link, a restored position) moves a page that was standing
+    // still. A big step in the middle of a fling is the browser catching up
+    // after a busy main thread, and right after one of our own corrections the
+    // step is not a scroll at all.
+    const vh = viewportHeight();
+    if (step > vh * 1.25 && Math.abs(before) < vh * 0.1 && !wasAdjusted() && y >= end - 1) {
       skip();
       return;
     }
+    // Topped up a few screens at a time: a height change re-lays out the page,
+    // so it should not happen on every frame of a slow scroll.
     const margin = viewportHeight() * 2;
-    if (y + margin > end + extra) extend(Math.ceil(y + margin - end));
+    if (y + margin > end + extra) extend(Math.ceil(y + margin * 2 - end));
   };
 
   return {

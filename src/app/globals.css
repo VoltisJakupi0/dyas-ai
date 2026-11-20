@@ -1359,8 +1359,8 @@ body::before {
      rush it. The track is one slot of scroll per transition plus a short tail. */
   .dyas-offer__cards {
     display: block;
-    height: calc((var(--offer-count, 3) - 0.75) * 85vh + 100vh);
-    height: calc((var(--offer-count, 3) - 0.75) * 85vh + 100svh);
+    height: calc((var(--offer-count, 3) - 0.75) * 100vh + 100vh);
+    height: calc((var(--offer-count, 3) - 0.75) * 100vh + 100svh);
   }
   .dyas-offer__pin {
     display: block;
@@ -2248,6 +2248,8 @@ body::before {
   .dyas-case .dyas-tile img {
     object-fit: cover;
     object-position: center 42%;
+    /* Its own layer: the photo is drawn once, not again when the card slides. */
+    will-change: transform;
   }
   .dyas-case .dyas-gallery__row {
     scale: none;
