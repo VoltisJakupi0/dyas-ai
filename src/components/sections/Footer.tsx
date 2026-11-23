@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type CSSProperties } from "react";
 import { Logo } from "@/components/ui/Logo";
+import { HomeLink } from "@/components/HomeLink";
 import { cta, footer, hrefProps, site } from "@/lib/site";
 import { observeInView } from "@/lib/scroll";
 
@@ -105,7 +106,9 @@ export function Footer() {
             </a>
           ))}
         </div>
-        <Logo className="dyas-closing__logo" />
+        <HomeLink className="dyas-closing__logo">
+          <Logo />
+        </HomeLink>
         <p>{footer.copyright}</p>
       </div>
     </footer>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { nav, site } from "@/lib/site";
 import { Button } from "@/components/ui/Button";
 import { Wordmark } from "@/components/ui/Logo";
+import { HomeLink } from "@/components/HomeLink";
 import { cn } from "@/lib/cn";
 import { onScrollPaint, prefersReducedMotion, supportsScrollTimeline, wasAdjusted } from "@/lib/scroll";
 
@@ -220,9 +221,9 @@ export function Header() {
           frost && "dyas-header--frost",
         )}
       >
-        <Link href="/" aria-label="Home" className="contents">
+        <HomeLink className="contents">
           <Wordmark ref={lockupRef} />
-        </Link>
+        </HomeLink>
       </header>
 
       <button

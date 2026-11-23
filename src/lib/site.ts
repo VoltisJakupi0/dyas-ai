@@ -81,7 +81,7 @@ export const services = [
 export const nav = {
   links: [
     { label: "Services", href: "/services", menu: "services" as const },
-    { label: "Products", href: "/products" },
+    { label: "Our Products", href: "/products" },
     { label: "Pricing", href: "/pricing" },
     { label: "About Us", href: "/about-us" },
     { label: "Contact Us", href: "/contact-us" },
@@ -119,6 +119,7 @@ export const logos: {
     { src: "/logos/europcar.png", alt: "Europcar", scale: 2.2, native: true },
     { src: "/logos/maverick-3.png", alt: "Maverick Concierge", scale: 2.8, native: true },
     { src: "/logos/think-b-logo.png", alt: "think b", scale: 1.5, native: true },
+    { src: "/products/folet/folet-black.png", alt: "Folet", scale: 2.2, native: true },
   ],
 };
 
